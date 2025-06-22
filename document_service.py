@@ -1,62 +1,39 @@
-import mysql.connector
-import json
-from ir_project.config import DB_CONFIG
+import scripts.load_datasets as load_datasets
 
 class DocumentService:
-    def __init__(self):
-        """Initializes the Document Service and connects to the database."""
-        self.db_connection = mysql.connector.connect(**DB_CONFIG)
-        self.cursor = self.db_connection.cursor(dictionary=True)
+    def __init__(self, dataset_name='trec-tot/2023/train'):
+        """Initializes the Document Service with a specific dataset."""
+        try:
+            self.datasets = load_datasets.load_datasets()
+            for dataset in self.datasets:
+                print('loaded dataset: ', dataset)
+            
+        except Exception as e:
+            raise RuntimeError(f"Failed to load dataset '{dataset_name}': {e}")
 
-    def add_document(self, doc_id, text, metadata=None):
-        """Adds a document to the database."""
-        if self.document_exists(doc_id):
-            # print(f"Document {doc_id} already exists.")
-            return
-
-        sql = "INSERT INTO documents (doc_id, text, metadata) VALUES (%s, %s, %s)"
-        # Convert metadata dict to a JSON string
-        metadata_json = json.dumps(metadata) if metadata else None
-        self.cursor.execute(sql, (doc_id, text, metadata_json))
-        self.db_connection.commit()
-
-    def get_document(self, doc_id):
+    def get_document(self, doc_id, dataset_name = 'trec-tot/2023/train'):
         """Retrieves a document by its ID."""
-        self.cursor.execute("SELECT * FROM documents WHERE doc_id = %s", (doc_id,))
-        return self.cursor.fetchone()
+        return self.datasets[dataset_name].docs_store().get(doc_id)
 
-    def document_exists(self, doc_id):
-        """Checks if a document exists in the database."""
-        self.cursor.execute("SELECT id FROM documents WHERE doc_id = %s", (doc_id,))
-        return self.cursor.fetchone() is not None
-
-    def get_all_documents(self):
-        """Retrieves all documents from the database."""
-        self.cursor.execute("SELECT * FROM documents")
-        return self.cursor.fetchall()
-
-    def close_connection(self):
-        """Closes the database connection."""
-        self.db_connection.close()
+    def get_all_documents(self, dataset_name = 'trec-tot/2023/train'):
+        """Retrieves all documents from the dataset."""
+        return self.datasets[dataset_name].docs_store()
 
 if __name__ == '__main__':
     # Example usage
     doc_service = DocumentService()
 
-    # Add a sample document
-    print("Adding a sample document...")
-    sample_doc_id = 'sample_123'
-    sample_text = 'This is the text for the sample document.'
-    sample_metadata = {'source': 'test'}
-    doc_service.add_document(sample_doc_id, sample_text, sample_metadata)
+    # print first 10 documents
+    print("\nFirst 10 documents:")
+    for i, doc in enumerate(doc_service.get_all_documents('trec-tot/2023/train')):
+        if i >= 10:
+            break
+        print(f"Document {i}: {doc.doc_id}: {doc.text}")
 
     # Retrieve the document
-    print(f"Retrieving document {sample_doc_id}...")
-    doc = doc_service.get_document(sample_doc_id)
+    # doc_id = '1'
+    # print(f"Retrieving document {doc_id} from dataset trec-tot/2023/train...")
+    # doc = doc_service.get_document(doc_id, 'trec-tot/2023/train')
     print(f"Retrieved: {doc}")
 
-    # Check for existence
-    print(f"Does document {sample_doc_id} exist? {doc_service.document_exists(sample_doc_id)}")
-
-    doc_service.close_connection()
     print("\nDocument service test complete.")

@@ -1,7 +1,7 @@
 import pickle
 from sklearn.feature_extraction.text import TfidfVectorizer
-from ir_project.document_service import DocumentService
-from ir_project.preprocessor import Preprocessor
+from document_service import DocumentService
+from preprocessor import Preprocessor
 
 class ModelService:
     def __init__(self, vectorizer_path='tfidf_vectorizer.pkl', matrix_path='tfidf_matrix.pkl'):
@@ -17,20 +17,16 @@ class ModelService:
         doc_service = DocumentService()
 
         # First, get a count of documents to verify.
-        doc_service.cursor.execute("SELECT COUNT(*) as count FROM documents")
-        count = doc_service.cursor.fetchone()['count']
-        print(f"Found {count} documents in the database.")
-
-        print("Fetching documents for training...")
         documents = doc_service.get_all_documents()
-        doc_service.close_connection()
+        print("Fetching documents for training...")
+        print(f"Found {len(documents)} documents in the database.")
 
         if not documents:
             print("No documents found in the database. Aborting training.")
             return
 
         print(f"Training model on {len(documents)} documents...")
-        corpus = [doc['text'] for doc in documents]
+        corpus = [doc.text for doc in documents]
         
         # Use the preprocessor's process method as the analyzer
         self.vectorizer = TfidfVectorizer(analyzer=self.preprocessor.process)
