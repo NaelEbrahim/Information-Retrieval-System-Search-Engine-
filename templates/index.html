@@ -1,13 +1,8 @@
 {% extends 'base.html' %}
 
-{% block title %}Home - Search Engine{% endblock %}
-
 {% block content %}
-    <div class="search-container">
-        <h2>Search for Documents</h2>
-        <form action="{{ url_for('search') }}" method="post">
-            <input type="text" name="query" placeholder="Enter your search query..." required>
-            <button type="submit">Search</button>
-        </form>
-    </div>
+<form action="{{ url_for('search') }}" method="post">
+    <input class="search-bar" type="text" name="query" placeholder="Search..." required>
+    <button class="search-btn" type="submit">Search</button>
+</form>
 {% endblock %}
