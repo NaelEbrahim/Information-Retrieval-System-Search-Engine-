@@ -2,11 +2,18 @@
 
 {% block content %}
 <h2>Results for "{{ query }}"</h2>
+{% if dataset %}
+    <p>Dataset: {{ dataset }}</p>
+{% endif %}
+
+<!-- count the result -->
+<p>Number of results: {{ results|length }}</p>
+    
 {% if results %}
     {% for r in results %}
         <div class="result">
-            <a href="#"><h3>{{ r.title }}</h3></a>
-            <p>{{ r.snippet }}</p>
+            <a href="/document/{{ r.doc_id }}"><h3>{{ r.doc_id }}</h3></a>
+            <p>{{ r.text[:300] }}...</p>
         </div>
     {% endfor %}
 {% else %}

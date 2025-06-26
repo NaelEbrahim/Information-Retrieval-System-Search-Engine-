@@ -103,6 +103,25 @@ header h1 a {
     color: #007bff;
 }
 
+/* Document Page */
+.container article {
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+.container article p {
+    margin-bottom: 10px;
+}
+
+/* Dataset select */
+select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    margin-right: 10px;
+}
+
 /* Footer */
 footer {
     text-align: center;

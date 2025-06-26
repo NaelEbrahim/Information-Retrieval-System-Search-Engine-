@@ -2,6 +2,11 @@
 
 {% block content %}
 <form action="{{ url_for('search') }}" method="post">
+    <!-- dataset select -->
+    <select name="dataset" id="dataset">
+        <option value="trec-tot/2023/train">TREC TOT 2023</option>
+        <option value="antique/train">Antique</option>
+    </select>
     <input class="search-bar" type="text" name="query" placeholder="Search..." required>
     <button class="search-btn" type="submit">Search</button>
 </form>

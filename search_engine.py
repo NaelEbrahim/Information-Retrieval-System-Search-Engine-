@@ -1,4 +1,5 @@
 from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
 from model_service import ModelService
 from preprocessor import Preprocessor
 from document_service import DocumentService
@@ -22,7 +23,7 @@ class SearchEngine:
         if not self.documents:
             raise RuntimeError("No documents found in the database. Aborting search engine initialization.")
 
-    def search(self, query, top_n=10):
+    def search(self, query, top_n=10, dataset_name='trec-tot/2023/train'):
         """
         Performs a search for a given query and returns the top N results.
         """
@@ -31,17 +32,23 @@ class SearchEngine:
             return []
 
         # Preprocess the query
+        print("Preprocessing query...")
         processed_query = ' '.join(self.preprocessor.process(query))
+        print("Preprocessed query:", processed_query)
 
         # Transform the query into a TF-IDF vector
         query_vector = self.vectorizer.transform([processed_query])
+        print("Query vector:", query_vector)
 
         # Calculate cosine similarity
         cosine_similarities = cosine_similarity(query_vector, self.tfidf_matrix).flatten()
+        print("Cosine similarities:", cosine_similarities)
 
         # Get the top N document indices
         # We use argpartition for efficiency, as it's faster than sorting the whole array
-        top_doc_indices = cosine_similarities.argsort()[-top_n:][::-1]
+        top_doc_indices = np.argpartition(cosine_similarities, -top_n)[-top_n:][::-1]
+        
+        print("Top document indices:", top_doc_indices)
 
         # get the documents with non-zero cosine similarity
         # non_zero_indices = [i for i in top_doc_indices if cosine_similarities[i] > 0]
@@ -52,7 +59,7 @@ class SearchEngine:
             doc_id = self.doc_id_map[i]
             score = cosine_similarities[i]
             # Fetch the full document details from our initial list
-            doc_details = next((doc for doc in self.documents if doc.doc_id == doc_id), None)
+            doc_details = self.doc_service.get_document(doc_id, dataset_name)
             if doc_details:
                 results.append({'doc_id': doc_id, 'score': score, 'text': doc_details.text})
         
@@ -64,7 +71,7 @@ if __name__ == '__main__':
         print("Search engine initialized.")
         # Example search
         search_query = "who is Juan que reía"
-        search_results = search_engine.search(search_query)
+        search_results = search_engine.search(search_query, dataset_name='antique/train')
 
         print(f"\nSearch results for: '{search_query}'")
         for result in search_results:

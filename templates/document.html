@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Document #{{ doc.doc_id }}</h1>
+<div class="container">
+    <article>{{ doc.text }}</article>
+</div>
+<a href="{{ url_for('index') }}">Back to search</a>
+{% endblock %}

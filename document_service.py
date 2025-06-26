@@ -5,6 +5,8 @@ class DocumentService:
         """Initializes the Document Service with a specific dataset."""
         try:
             self.datasets = load_datasets.load_datasets()
+            self.docs_store_trec = self.datasets['trec-tot/2023/train'].docs_store()
+            self.docs_store_antique = self.datasets['antique/train'].docs_store()
             for dataset in self.datasets:
                 print('loaded dataset: ', dataset)
             
@@ -13,11 +15,17 @@ class DocumentService:
 
     def get_document(self, doc_id, dataset_name = 'trec-tot/2023/train'):
         """Retrieves a document by its ID."""
-        return self.datasets[dataset_name].docs_store().get(doc_id)
+        if dataset_name == 'trec-tot/2023/train':
+            return self.docs_store_trec.get(doc_id)
+        elif dataset_name == 'antique/train':
+            return self.docs_store_antique.get(doc_id)
 
     def get_all_documents(self, dataset_name = 'trec-tot/2023/train'):
         """Retrieves all documents from the dataset."""
-        return self.datasets[dataset_name].docs_store()
+        if dataset_name == 'trec-tot/2023/train':
+            return self.docs_store_trec
+        elif dataset_name == 'antique/train':
+            return self.docs_store_antique
 
 if __name__ == '__main__':
     # Example usage
