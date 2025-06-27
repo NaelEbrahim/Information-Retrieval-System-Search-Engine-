@@ -11,16 +11,13 @@ def index():
     """Renders the main search page."""
     return render_template('index.html')
 
-@app.route('/search', methods=['POST'])
+@app.route('/search', methods=['GET'])
 def search():
     """Handles the search query and displays results."""
-    query = request.form.get('query')
-    dataset = request.form.get('dataset')
+    query = request.args.get('query')
+    dataset = request.args.get('dataset', default='trec-tot/2023/train')
     if not query:
         return render_template('index.html', error="Please enter a search query.")
-
-    if not dataset and dataset != 'trec-tot/2023/train' and dataset != 'antique/train':
-        dataset = 'trec-tot/2023/train'
     
     results = search_engine.search(query, dataset_name=dataset)
     return render_template('results.html', query=query, results=results, dataset=dataset)
@@ -28,8 +25,12 @@ def search():
 @app.route('/document/<doc_id>')
 def document(doc_id):
     """Handles the document page."""
-    doc = search_engine.doc_service.get_document(doc_id)
-    return render_template('document.html', doc=doc)
+    # get datasets from query
+    dataset = request.args.get('dataset')
+    doc = search_engine.doc_service.get_document(doc_id, dataset)
+    if not doc:
+        return render_template('not_found.html', doc=doc, dataset=dataset)
+    return render_template('document.html', doc=doc, dataset=dataset)
 
 if __name__ == '__main__':
     app.run(debug=True)

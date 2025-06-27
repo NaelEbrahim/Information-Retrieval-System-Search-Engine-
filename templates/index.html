@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<form action="{{ url_for('search') }}" method="post">
+<form action="{{ url_for('search', dataset=request.args.get('dataset'), query=request.args.get('query')) }}" method="get">
     <!-- dataset select -->
     <select name="dataset" id="dataset">
-        <option value="trec-tot/2023/train">TREC TOT 2023</option>
-        <option value="antique/train">Antique</option>
+        <option value="trec-tot/2023/train" {% if request.args.get('dataset') == 'trec-tot/2023/train' %}selected{% endif %}>TREC TOT 2023</option>
+        <option value="antique/train" {% if request.args.get('dataset') == 'antique/train' %}selected{% endif %}>Antique</option>
     </select>
-    <input class="search-bar" type="text" name="query" placeholder="Search..." required>
+    <input class="search-bar" type="text" name="query" placeholder="Search..." value="{{ request.args.get('query', '') }}" required>
     <button class="search-btn" type="submit">Search</button>
 </form>
 {% endblock %}

@@ -95,7 +95,7 @@ def train_spell_corrector():
     """
     print("Starting spell corrector training...")
     doc_service = DocumentService()
-    documents = doc_service.get_all_documents()
+    documents = doc_service.get_docs_store()
 
     if not documents:
         print("No documents found in the database. Aborting training.")
