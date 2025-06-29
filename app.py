@@ -16,11 +16,12 @@ def search():
     """Handles the search query and displays results."""
     query = request.args.get('query')
     dataset = request.args.get('dataset', default='trec-tot/2023/train')
+    model_type = request.args.get('model_type', default='tfidf')
     if not query:
         return render_template('index.html', error="Please enter a search query.")
     
-    results = search_engine.search(query, dataset_name=dataset)
-    return render_template('results.html', query=query, results=results, dataset=dataset)
+    results = search_engine.search(query, dataset_name=dataset, model_type=model_type)
+    return render_template('results.html', query=query, results=results, dataset=dataset, model_type=model_type)
 
 @app.route('/document/<doc_id>')
 def document(doc_id):
