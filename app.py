@@ -1,10 +1,12 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from search_engine import SearchEngine
+from services.query_suggestion_service import QuerySuggestionService
 
 app = Flask('__main__')
 
 # Initialize the search engine once
 search_engine = SearchEngine()
+query_suggestion_service = QuerySuggestionService()
 
 @app.route('/')
 def index():
@@ -33,5 +35,13 @@ def document(doc_id):
         return render_template('not_found.html', doc=doc, dataset=dataset)
     return render_template('document.html', doc=doc, dataset=dataset)
 
+@app.route('/suggest')
+def suggest():
+    """Returns a list of query suggestions."""
+    query = request.args.get('query', '')
+    dataset = request.args.get('dataset', default='trec-tot/2023/train')
+    suggestions = query_suggestion_service.get_suggestions(query, dataset_name=dataset)
+    return jsonify(suggestions)
+
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)

@@ -4,114 +4,11 @@
     <meta charset="utf-8">
     <title>Mini Search</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        :root {
-            --blue: #1a73e8;
-            --gray-light: #f8f9fa;
-            --gray-medium: #dadce0;
-            --text: #202124;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--gray-light);
-            color: var(--text);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        header {
-            padding: 20px;
-            text-align: center;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            color: var(--blue);
-        }
-
-        form {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-
-        .search-bar {
-            padding: 12px 20px;
-            width: 60vw;
-            max-width: 500px;
-            border: 1px solid var(--gray-medium);
-            border-radius: 24px;
-            font-size: 16px;
-            outline: none;
-            background: white;
-            transition: box-shadow 0.2s ease;
-        }
-
-        .search-bar:focus {
-            box-shadow: 0 0 5px rgba(26, 115, 232, 0.5);
-            border-color: var(--blue);
-        }
-
-        .search-btn {
-            padding: 12px 20px;
-            font-size: 16px;
-            background-color: var(--blue);
-            color: white;
-            border: none;
-            border-radius: 24px;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-
-        .search-btn:hover {
-            background-color: #1558b0;
-        }
-
-        .result {
-            background: white;
-            margin: 10px auto;
-            padding: 20px;
-            width: 90%;
-            max-width: 700px;
-            text-align: left;
-            border-radius: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border: 1px solid #e0e0e0;
-        }
-
-        a {
-            color: var(--blue);
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        footer {
-            margin-top: auto;
-            padding: 20px;
-            font-size: 14px;
-            color: #777;
-        }
-    </style>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <header>
-        <h1>Mini Search</h1>
+        <h1><a href="{{ url_for('index') }}">Mini Search</a></h1>
     </header>
 
     {% block content %}{% endblock %}

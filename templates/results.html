@@ -16,7 +16,11 @@
     {% for r in results %}
         <div class="result">
             <a href="/document/{{ r.doc_id }}?dataset={{ dataset }}"><h3>{{ r.doc_id }} <small>(score: {{ r.score }})</small></h3></a>
+            {% if r.text|length > 300 %}
             <p>{{ r.text[:300] }}...</p>
+            {% else %}
+            <p>{{ r.text }}</p>
+            {% endif %}
         </div>
     {% endfor %}
 {% else %}

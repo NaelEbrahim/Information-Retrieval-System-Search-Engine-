@@ -2,18 +2,21 @@
 
 {% block content %}
 <form action="{{ url_for('search') }}" method="get">
-    <!-- dataset select -->
-    <select name="dataset" id="dataset">
-        <option value="trec-tot/2023/train" {% if request.args.get('dataset') == 'trec-tot/2023/train' %}selected{% endif %}>TREC TOT 2023</option>
-        <option value="antique/train" {% if request.args.get('dataset') == 'antique/train' %}selected{% endif %}>Antique</option>
-    </select>
-    <!-- model select -->
-    <select name="model_type" id="model_type">
-        <option value="tfidf" {% if request.args.get('model_type') == 'tfidf' %}selected{% endif %}>TF-IDF</option>
-        <option value="word2vec" {% if request.args.get('model_type') == 'word2vec' %}selected{% endif %}>Word2Vec</option>
-        <option value="hybrid" {% if request.args.get('model_type') == 'hybrid' %}selected{% endif %}>Hybrid</option>
-    </select>
-    <input class="search-bar" type="text" name="query" placeholder="Search..." value="{{ request.args.get('query', '') }}" required>
+    <div class="flex-row">
+        <select name="dataset" id="dataset">
+            <option value="trec-tot/2023/train" {% if request.args.get('dataset') == 'trec-tot/2023/train' %}selected{% endif %}>TREC TOT 2023</option>
+            <option value="antique/train" {% if request.args.get('dataset') == 'antique/train' %}selected{% endif %}>Antique</option>
+        </select>
+        <select name="model_type" id="model_type">
+            <option value="tfidf" {% if request.args.get('model_type') == 'tfidf' %}selected{% endif %}>TF-IDF</option>
+            <option value="word2vec" {% if request.args.get('model_type') == 'word2vec' %}selected{% endif %}>Word2Vec</option>
+            <option value="hybrid" {% if request.args.get('model_type') == 'hybrid' %}selected{% endif %}>Hybrid</option>
+        </select>
+    </div>
+    <div class="search-container">
+        <input class="search-bar" type="text" name="query" placeholder="Search..." value="{{ request.args.get('query', '') }}" required autocomplete="off">
+        <div id="suggestions"></div>
+    </div>
     <button class="search-btn" type="submit">Search</button>
 </form>
 
@@ -22,6 +25,37 @@
 </p>
 
 <script>
+    const searchBar = document.querySelector('.search-bar');
+    const suggestionsDiv = document.getElementById('suggestions');
+
+    const debounceTime = 300;
+
+    const debounce = (fn, delay = 300) => {
+        let timer;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => fn(...args), delay);
+        };
+    };
+
+    searchBar.addEventListener('keyup', debounce(async () => {
+        const query = searchBar.value;
+        const dataset = document.getElementById('dataset').value;
+        if (query.length < 3) {
+            suggestionsDiv.innerHTML = '';
+            return;
+        }
+
+        const response = await fetch(`/suggest?query=${query}&dataset=${dataset}`);
+        const suggestions = await response.json();
+
+        let html = '';
+        suggestions.forEach(s => {
+            html += `<div class="flex-row"><a class="suggestion-item" href="/search?query=${s}&dataset=${dataset}">${s}</a> <bold class="add-query">+</bold></div>`;
+        });
+        suggestionsDiv.innerHTML = html;
+    }, debounceTime));
+
     // onchange datasets update dataset info
     document.getElementById('dataset').addEventListener('change', function() {
         const dataset = this.value;
@@ -30,6 +64,15 @@
             datasetInfo.innerHTML = 'trec-tot/2023/train is Tip of the tongue: The phenomenon of failing to retrieve something from memory, combined with partial recall and the feeling that retrieval is imminent.';
         } else if (dataset === 'antique/train') {
             datasetInfo.innerHTML = 'ANTIQUE is a non-factoid question answering dataset based on the questions and answers of Yahoo! Webscope L6';
+        }
+    });
+
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('add-query')) {
+            const query = e.target.previousElementSibling.textContent;
+            searchBar.value = query;
+            suggestionsDiv.innerHTML = '';
+            searchBar.focus();
         }
     });
 </script>
