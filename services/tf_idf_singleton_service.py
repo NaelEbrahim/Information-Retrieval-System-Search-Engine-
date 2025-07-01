@@ -47,7 +47,7 @@ class TFIDFSingletonService:
         tfidf_matrix = self.get_tfidf_service(dataset_name).get_tfidf_matrix()
 
         query_vector = vectorizer.transform([" ".join(processed_tokens)])
-        if np.all(query_vector == 0):
+        if query_vector.count_nonzero() == 0:
             print("Warning: Query vector is all zeros after processing")
             return []
 

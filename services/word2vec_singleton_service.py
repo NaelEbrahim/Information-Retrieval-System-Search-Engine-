@@ -53,7 +53,7 @@ class Word2VecSingletonService:
             return []
 
         query_vector = self._document_vector(processed_tokens, model)
-        if np.all(query_vector == 0):
+        if query_vector.count_nonzero() == 0:
             print("Warning: Query vector is all zeros after processing")
             return []
             
