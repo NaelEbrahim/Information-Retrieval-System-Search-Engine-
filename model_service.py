@@ -1,10 +1,11 @@
+from rich import print
 import os
 import joblib
 from sklearn.feature_extraction.text import TfidfVectorizer
-from document_service import DocumentService
+from services.document_service_singleton import DocumentService
 from preprocessor import Preprocessor
 
-class ModelService:
+class TFIDFService:
     def __init__(self, vectorizer_path='tfidf_vectorizer.joblib', matrix_path='tfidf_matrix.joblib'):
         """Initializes the Model Service."""
         self.preprocessor = Preprocessor()
@@ -18,13 +19,13 @@ class ModelService:
         doc_service = DocumentService()
 
         # First, get a count of documents to verify.
-        print(f"Fetching documents for training from {ds}...")
+        print(f"Fetching documents for training from '{ds}'...")
         documents = doc_service.get_docs_store(ds)
-        print("Documents fetched successfully.")
+        print(f"Documents fetched successfully for dataset: '{ds}'")
         print(f"Found {documents.count()} documents in the database.")
 
         if not documents:
-            print("No documents found in the database. Aborting training.")
+            print(f"No documents found in the database for dataset: '{ds}'. Aborting training.")
             return
 
         print(f"Training model on {documents.count()} documents...")
@@ -34,22 +35,22 @@ class ModelService:
         self.vectorizer = TfidfVectorizer(analyzer=self.preprocessor.process, max_features=5000)
         self.tfidf_matrix = self.vectorizer.fit_transform(corpus)
 
-        print("Saving model to disk...")
+        print(f"Saving TF-IDF model to disk for dataset: '{ds}'...")
         if not os.path.exists(os.path.join('database', ds)):
             os.makedirs(os.path.join('database', ds))
         joblib.dump(self.vectorizer, os.path.join('database', f"{ds}/" + self.vectorizer_path))
         joblib.dump(self.tfidf_matrix, os.path.join('database', f"{ds}/" + self.matrix_path))
-        print("Model saved successfully.")
+        print(f"TF-IDF model saved successfully for dataset: '{ds}'")
 
     def load_model(self, ds):
         """Loads the TF-IDF model from disk."""
-        print("Loading model from disk...")
+        print(f"Loading TF-IDF model from disk for dataset: '{ds}'")
         try:
             self.vectorizer = joblib.load(os.path.join('database', f"{ds}/" + self.vectorizer_path))
             self.tfidf_matrix = joblib.load(os.path.join('database', f"{ds}/" + self.matrix_path))
-            print("Model loaded successfully.")
+            print(f"TF-IDF model loaded successfully for dataset: '{ds}'")
         except FileNotFoundError:
-            print("Model files not found. Please train the model first.")
+            print(f"TF-IDF model files not found for dataset: '{ds}'. Please train the model first.")
             return False
         return True
 
@@ -60,6 +61,6 @@ class ModelService:
         return self.vectorizer
 
 if __name__ == '__main__':
-    model_service = ModelService()
+    model_service = TFIDFService()
     for dataset in DocumentService.available_datasets:
         model_service.train_and_save_model(dataset)

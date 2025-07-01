@@ -3,3 +3,8 @@ ir_datasets
 nltk
 mysql-connector-python
 scikit-learn
+numpy
+gensim
+joblib
+tqdm
+rich

@@ -1,7 +1,7 @@
 import re
 import pickle
 from collections import Counter
-from document_service import DocumentService
+from services.document_service_singleton import DocumentService
 
 class SpellCorrector:
     """

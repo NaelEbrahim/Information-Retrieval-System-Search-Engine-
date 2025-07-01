@@ -2,7 +2,7 @@ import os
 import joblib
 import numpy as np
 from gensim.models import Word2Vec
-from document_service import DocumentService
+from services.document_service_singleton import DocumentService
 from preprocessor import Preprocessor
 
 class Word2VecService:
