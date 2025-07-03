@@ -22,8 +22,8 @@ def search():
     if not query:
         return render_template('index.html', error="Please enter a search query.")
     
-    results = search_engine.search(query, dataset_name=dataset, model_type=model_type)
-    return render_template('results.html', query=query, results=results, dataset=dataset, model_type=model_type)
+    num_results, results = search_engine.search(query, dataset_name=dataset, model_type=model_type)
+    return render_template('results.html', query=query, results=results, dataset=dataset, model_type=model_type, num_results=num_results)
 
 @app.route('/document/<doc_id>')
 def document(doc_id):

@@ -89,7 +89,7 @@ class HybridSearchService:
             combined_scores = alpha * norm_tfidf_scores + beta * norm_w2v_scores
 
             # Get top results from candidates
-            top_candidate_indices = np.argsort(combined_scores)[-top_n:][::-1]
+            top_candidate_indices = np.argsort(combined_scores)[::-1]
 
             results = []
             index_to_doc_id = self.index_service.index_to_doc_ids[dataset_name]
@@ -101,10 +101,10 @@ class HybridSearchService:
                         score = combined_scores[i]
                         results.append({"doc_id": doc_id, "score": score})
 
-            return sorted(results, key=lambda x: x["score"], reverse=True)
+            return len(results), sorted(results, key=lambda x: x["score"], reverse=True)[:top_n]
         except Exception as e:
             print(f"Error calculating hybrid search: {str(e)}")
-            return []
+            return 0, []
 
 
 if __name__ == "__main__":

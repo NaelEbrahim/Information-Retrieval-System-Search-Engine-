@@ -9,7 +9,7 @@
     {% if model_type %}
     <span>, Model: <b>{{ model_type }}</b></span>
     {% endif %}
-    <span>, <b>{{ results|length }}</b> results</span>
+    <span>, fetch {{results|length}} from <b>{{ num_results }}</b> results found</span>
 </div>
     
 {% if results %}

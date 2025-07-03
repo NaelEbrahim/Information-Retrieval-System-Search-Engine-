@@ -53,7 +53,7 @@ class Word2VecSingletonService:
             return []
 
         query_vector = self._document_vector(processed_tokens, model)
-        if query_vector.count_nonzero() == 0:
+        if np.count_nonzero(query_vector) == 0:
             print("Warning: Query vector is all zeros after processing")
             return []
             
@@ -70,7 +70,7 @@ class Word2VecSingletonService:
             return self._get_top_results(cosine_similarities, top_n, dataset_name, candidate_indices)
         except Exception as e:
             print(f"Error calculating cosine similarity: {str(e)}")
-            return []
+            return 0, []
 
     def _document_vector(self, doc_tokens, model):
         """Calculates the vector representation of a document."""
@@ -80,7 +80,7 @@ class Word2VecSingletonService:
         return np.mean(vectors, axis=0)
 
     def _get_top_results(self, cosine_similarities, top_n, dataset_name, candidate_indices):
-        top_doc_indecies = np.argsort(cosine_similarities)[-top_n:][::-1]
+        top_doc_indecies = np.argsort(cosine_similarities)[::-1]
         results = []
         for i in top_doc_indecies:
             original_index = candidate_indices[i]
@@ -89,7 +89,7 @@ class Word2VecSingletonService:
                 if doc_id:
                     results.append({"doc_id": doc_id, "score": cosine_similarities[i]})
         
-        return sorted(results, key=lambda x: x["score"], reverse=True)
+        return len(results), sorted(results, key=lambda x: x["score"], reverse=True)[:top_n]
 
 if __name__ == "__main__":
     w2v_singleton_service = Word2VecSingletonService()

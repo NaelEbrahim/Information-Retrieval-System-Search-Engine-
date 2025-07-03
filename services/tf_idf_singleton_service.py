@@ -64,10 +64,10 @@ class TFIDFSingletonService:
             return self._get_top_results(cosine_similarities, top_n, dataset_name, candidate_indices)
         except Exception as e:
             print(f"Error calculating cosine similarity: {str(e)}")
-            return []
+            return 0, []
 
     def _get_top_results(self, cosine_similarities, top_n, dataset_name, candidate_indices):
-        top_doc_indecies = np.argsort(cosine_similarities)[-top_n:][::-1]
+        top_doc_indecies = np.argsort(cosine_similarities)[::-1]
         results = []
         for i in top_doc_indecies:
             original_index = candidate_indices[i]
@@ -76,7 +76,7 @@ class TFIDFSingletonService:
                 if doc_id:
                     results.append({"doc_id": doc_id, "score": cosine_similarities[i] })
         
-        return sorted(results, key=lambda x: x["score"], reverse=True)
+        return len(results), sorted(results, key=lambda x: x["score"], reverse=True)[:top_n]
 
 if __name__ == "__main__":
     tf_idf_service = TFIDFSingletonService()
