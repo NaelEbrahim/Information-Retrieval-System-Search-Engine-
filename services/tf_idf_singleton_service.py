@@ -10,6 +10,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from inverted_index_singleton_service import InvertedIndexSingletonService
 
 class TFIDFSingletonService:
+    _initialized = False
     _instance = None
     index_service = None
     tf_idf_services = {}
@@ -23,11 +24,14 @@ class TFIDFSingletonService:
 
     def __init__(self):
         """Initializes the TF-IDF Singleton Service."""
+        if self._initialized:
+            return
         for dataset_name in self.available_datasets:
             self.tf_idf_services[dataset_name] = TFIDFService()
             self.tf_idf_services[dataset_name].load_model(dataset_name)
         
         self.index_service = InvertedIndexSingletonService()
+        self._initialized = True
 
     def get_tfidf_service(self, dataset_name):
         if dataset_name not in self.available_datasets:

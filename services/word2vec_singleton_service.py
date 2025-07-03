@@ -11,6 +11,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from inverted_index_singleton_service import InvertedIndexSingletonService
 
 class Word2VecSingletonService:
+    _initialized = False
     _instance = None
     index_service = None
     word2vec_services = {}
@@ -24,11 +25,14 @@ class Word2VecSingletonService:
 
     def __init__(self):
         """Initializes the Word2Vec Singleton Service."""
+        if self._initialized:
+            return
         for dataset_name in self.available_datasets:
             self.word2vec_services[dataset_name] = Word2VecService()
             self.word2vec_services[dataset_name].load_model(dataset_name)
         
         self.index_service = InvertedIndexSingletonService()
+        self._initialized = True
 
     def get_word2vec_service(self, dataset_name):
         if dataset_name not in self.available_datasets:
