@@ -40,7 +40,7 @@ class TFIDFService:
             os.makedirs(os.path.join('database', ds))
         joblib.dump(self.vectorizer, os.path.join('database', f"{ds}/" + self.vectorizer_path))
         joblib.dump(self.tfidf_matrix, os.path.join('database', f"{ds}/" + self.matrix_path))
-        print(f"TF-IDF model saved successfully for dataset: '{ds}'")
+        print(f"[green]TF-IDF model saved successfully for dataset: '{ds}'[/green]")
 
     def load_model(self, ds):
         """Loads the TF-IDF model from disk."""
@@ -48,9 +48,9 @@ class TFIDFService:
         try:
             self.vectorizer = joblib.load(os.path.join('database', f"{ds}/" + self.vectorizer_path))
             self.tfidf_matrix = joblib.load(os.path.join('database', f"{ds}/" + self.matrix_path))
-            print(f"TF-IDF model loaded successfully for dataset: '{ds}'")
+            print(f"[green]TF-IDF model loaded successfully for dataset: '{ds}'[/green]")
         except FileNotFoundError:
-            print(f"TF-IDF model files not found for dataset: '{ds}'. Please train the model first.")
+            print(f"[red]TF-IDF model files not found for dataset: '{ds}'. Please train the model first.[/red]")
             return False
         return True
 

@@ -1,3 +1,4 @@
+from rich import print
 import os
 import joblib
 import numpy as np
@@ -26,11 +27,11 @@ class Word2VecService:
         doc_service = DocumentService()
         print(f"Fetching documents for Word2Vec training from {ds}...")
         documents = doc_service.get_docs_store(ds)
-        print("Documents fetched successfully.")
+        print(f"[green]Documents fetched successfully.[/green]")
         print(f"Found {documents.count()} documents in the database.")
 
         if not documents:
-            print("No documents found. Aborting training.")
+            print(f"[red]No documents found. Aborting training.[/red]")
             return
 
         print(f"Preprocessing and tokenizing {documents.count()} documents...")
@@ -50,7 +51,7 @@ class Word2VecService:
         
         self.model.save(os.path.join(model_dir, self.model_path))
         joblib.dump(self.doc_vectors, os.path.join(model_dir, self.vectors_path))
-        print("Word2Vec data saved successfully.")
+        print("[green]Word2Vec data saved successfully.[/green]")
 
     def load_model(self, ds):
         """Loads the Word2Vec model and document vectors from disk."""
@@ -62,10 +63,10 @@ class Word2VecService:
         try:
             self.model = Word2Vec.load(model_file)
             self.doc_vectors = joblib.load(vectors_file)
-            print("Word2Vec data loaded successfully.")
+            print("[green]Word2Vec data loaded successfully.[/green]")
             return True
         except FileNotFoundError:
-            print(f"Word2Vec model or vectors not found for {ds}. Please train the model first.")
+            print(f"[red]Word2Vec model or vectors not found for {ds}. Please train the model first.[/red]")
             return False
 
     def get_model(self):
