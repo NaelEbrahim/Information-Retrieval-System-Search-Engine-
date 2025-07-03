@@ -8,12 +8,14 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from services.word2vec_singleton_service import Word2VecSingletonService
 from preprocessor import Preprocessor
+from spell_corrector import SpellCorrector
 
 class QuerySuggestionService:
     def __init__(self):
         """Initializes the Query Suggestion Service."""
         self.w2v_singleton_service = Word2VecSingletonService()
         self.preprocessor = Preprocessor()
+        self.spell_corrector = SpellCorrector()
 
     def get_suggestions(self, query, dataset_name, top_n=3):
         """
@@ -22,7 +24,11 @@ class QuerySuggestionService:
         if not query:
             return []
 
-        processed_tokens = self.preprocessor.process(query)
+        # 1. Correct spelling of the original query
+        corrected_query = self.spell_corrector.correct_sentence_spelling(query)
+
+        # 2. Process the *corrected* query
+        processed_tokens = self.preprocessor.process(corrected_query)
         
         w2v_service = self.w2v_singleton_service.get_word2vec_service(dataset_name)
         w2v_model = w2v_service.get_model()
@@ -31,16 +37,26 @@ class QuerySuggestionService:
             print(f"Word2Vec model for {dataset_name} is not loaded.")
             return []
 
+        # 3. Get term suggestions based on the corrected and processed tokens
         term_suggestions = self._suggest_terms(processed_tokens, w2v_model, top_n)
 
-        if not term_suggestions:
-            return []
+        suggested_queries = []
+        # 4. Add the corrected query as the first suggestion if it's different
+        if corrected_query.lower() != query.lower():
+            suggested_queries.append(corrected_query)
 
-        # Generate query combinations
+        if not term_suggestions:
+            return suggested_queries[:top_n]
+
+        # 5. Generate combinations and add them
         combinations = list(product(*term_suggestions))
         
         # Format and limit the suggestions
-        suggested_queries = [' '.join(combo) for combo in combinations]
+        # Avoid adding duplicates of the corrected query
+        for combo in combinations:
+            combo_str = ' '.join(combo)
+            if combo_str.lower() != corrected_query.lower():
+                suggested_queries.append(combo_str)
         
         return suggested_queries[:top_n]
 
