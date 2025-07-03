@@ -26,11 +26,11 @@ class SearchEngine:
         """
         results = []
         if model_type == "tfidf":
-            results = self.tfidf_service.search(query, dataset_name, top_n)
+            num_results, results = self.tfidf_service.search(query, dataset_name, top_n)
         elif model_type == "word2vec":
-            results = self.w2v_service.search(query, dataset_name, top_n)
+            num_results, results = self.w2v_service.search(query, dataset_name, top_n)
         elif model_type == "hybrid":
-            results = self.hybrid_service.search(query, dataset_name, top_n, alpha, beta)
+            num_results, results = self.hybrid_service.search(query, dataset_name, top_n, alpha, beta)
         else:
             raise ValueError(
                 "Invalid model_type specified. Choose 'tfidf', 'word2vec', or 'hybrid'."
@@ -41,7 +41,7 @@ class SearchEngine:
             if doc_details:
                 result["text"] = doc_details.text
 
-        return results
+        return num_results, results
 
         
 
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     query = "who is Juan que reía"
 
     print(f"\nSearching (Hybrid) for: '{query}' on antique dataset")
-    results = search_engine.search(
+    num_results, results = search_engine.search(
         query, dataset_name="trec-tot/2023/train", model_type="hybrid"
     )
     for result in results:

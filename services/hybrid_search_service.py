@@ -101,6 +101,8 @@ class HybridSearchService:
                         score = combined_scores[i]
                         results.append({"doc_id": doc_id, "score": score})
 
+            if (top_n == -1):
+                return len(results), sorted(results, key=lambda x: x["score"], reverse=True)
             return len(results), sorted(results, key=lambda x: x["score"], reverse=True)[:top_n]
         except Exception as e:
             print(f"Error calculating hybrid search: {str(e)}")

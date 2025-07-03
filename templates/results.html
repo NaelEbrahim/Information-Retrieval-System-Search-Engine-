@@ -17,7 +17,7 @@
         <div class="result">
             <a href="/document/{{ r.doc_id }}?dataset={{ dataset }}"><h3>{{ r.doc_id }} <small>(score: {{ r.score }})</small></h3></a>
             {% if r.text|length > 300 %}
-            <p>{{ r.text[:300] }}...</p>
+            <p>{{ r.text[:300] }}... <small><a href="/document/{{ r.doc_id }}?dataset={{ dataset }}">read more</a></small></p>
             {% else %}
             <p>{{ r.text }}</p>
             {% endif %}

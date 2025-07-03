@@ -92,7 +92,8 @@ class Word2VecSingletonService:
                 doc_id = self.index_service.index_to_doc_ids[dataset_name].get(original_index)
                 if doc_id:
                     results.append({"doc_id": doc_id, "score": cosine_similarities[i]})
-        
+        if (top_n == -1):
+            return len(results), sorted(results, key=lambda x: x["score"], reverse=True)
         return len(results), sorted(results, key=lambda x: x["score"], reverse=True)[:top_n]
 
 if __name__ == "__main__":

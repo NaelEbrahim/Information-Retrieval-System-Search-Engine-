@@ -80,6 +80,11 @@ class TFIDFSingletonService:
                 if doc_id:
                     results.append({"doc_id": doc_id, "score": cosine_similarities[i] })
         
+        # Convert top_n to integer to ensure proper slicing
+        top_n = int(top_n) if top_n != -1 else -1
+        
+        if top_n == -1:
+            return len(results), sorted(results, key=lambda x: x["score"], reverse=True)
         return len(results), sorted(results, key=lambda x: x["score"], reverse=True)[:top_n]
 
 if __name__ == "__main__":

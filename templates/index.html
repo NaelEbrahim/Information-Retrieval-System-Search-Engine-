@@ -12,6 +12,13 @@
             <option value="word2vec" {% if request.args.get('model_type') == 'word2vec' %}selected{% endif %}>Word2Vec</option>
             <option value="hybrid" {% if request.args.get('model_type') == 'hybrid' %}selected{% endif %}>Hybrid</option>
         </select>
+        <label for="alpha">Result Count:</label>
+        <select name="top_n" id="top_n">
+            <option value="10" {% if request.args.get('top_n') == '10' %}selected{% endif %}>10</option>
+            <option value="20" {% if request.args.get('top_n') == '20' %}selected{% endif %}>20</option>
+            <option value="50" {% if request.args.get('top_n') == '50' %}selected{% endif %}>50</option>
+            <option value="-1" {% if request.args.get('top_n') == '-1' %}selected{% endif %}>All</option>
+        </select>
     </div>
     <div class="search-container">
         <input class="search-bar" type="text" name="query" placeholder="Search..." value="{{ request.args.get('query', '') }}" required autocomplete="off">
