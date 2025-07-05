@@ -1,7 +1,7 @@
 from rich import print
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.preprocessing import normalize
+from sklearn.preprocessing import MinMaxScaler
 import sys
 import os
 
@@ -81,9 +81,10 @@ class HybridSearchService:
                 query_vector_w2v, candidate_doc_vectors
             ).flatten()
 
-            # Normalize scores
-            norm_tfidf_scores = normalize(tfidf_scores[:, np.newaxis], axis=0).ravel()
-            norm_w2v_scores = normalize(w2v_scores[:, np.newaxis], axis=0).ravel()
+            # Scale scores to [0, 1] range
+            scaler = MinMaxScaler()
+            norm_tfidf_scores = scaler.fit_transform(tfidf_scores[:, np.newaxis]).ravel()
+            norm_w2v_scores = scaler.fit_transform(w2v_scores[:, np.newaxis]).ravel()
 
             # Combine scores
             combined_scores = alpha * norm_tfidf_scores + beta * norm_w2v_scores
