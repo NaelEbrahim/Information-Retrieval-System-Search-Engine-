@@ -54,18 +54,18 @@ class Word2VecSingletonService:
 
         if model is None or doc_vectors is None:
             print(f"Word2Vec model for {dataset_name} is not loaded.")
-            return []
+            return 0, []
 
         query_vector = self._document_vector(processed_tokens, model)
         if np.count_nonzero(query_vector) == 0:
             print("Warning: Query vector is all zeros after processing")
-            return []
+            return 0, []
             
         query_vector = query_vector.reshape(1, -1)
         
         if len(candidate_indices) == 0:
             print("No matching documents found for the query")
-            return []
+            return 0, []
             
         candidate_doc_vectors = doc_vectors[candidate_indices]
         
