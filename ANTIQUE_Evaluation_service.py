@@ -19,7 +19,6 @@ class AntiqueEvaluationPipeline:
         self.hybrid_service = HybridSearchService()
 
     def run(self):
-        # Load queries
         queries = []
         with open(self.QUERIES_PATH, "r", encoding="utf-8") as f:
             for line in f:
@@ -30,7 +29,6 @@ class AntiqueEvaluationPipeline:
                 query_text = ' '.join(parts[1:])
                 queries.append({"id": query_id, "text": query_text})
 
-        # Load qrels
         qrels = {}
         with open(self.QRELS_PATH, "r", encoding="utf-8") as f:
             for line in f:
@@ -44,14 +42,14 @@ class AntiqueEvaluationPipeline:
                     doc_id = parts[2]
                     qrels.setdefault(query_id, set()).add(doc_id)
 
-        # Search and evaluate
+
         predictions = {}
         successful_queries = []
 
         for q in queries:
             query_id = str(q["id"])
             query_text = q["text"]
-            print(f"\n🔍 Searching for Query ID {query_id}...")
+            print(f"\n Searching for Query ID {query_id}...")
 
             model_type = 'word2vec'
             top_n = 10
@@ -76,7 +74,7 @@ class AntiqueEvaluationPipeline:
             if expected_doc_ids & retrieved_doc_ids:
                 successful_queries.append(query_id)
 
-        # Evaluate
+
         all_y_true = [list(qrels[qid]) for qid in predictions if qid in qrels]
         all_y_pred = [predictions[qid] for qid in predictions if qid in qrels]
 
@@ -93,7 +91,7 @@ class AntiqueEvaluationPipeline:
         with open("successful_queries_antique.txt", "w") as f:
             f.write("\n".join(successful_queries))
 
-        print(f"\n✅ Done! Metrics saved to {self.RESULTS_OUTPUT}")
+        print(f"\n Done! Metrics saved to {self.RESULTS_OUTPUT}")
 
 
 if __name__ == "__main__":
@@ -103,4 +101,4 @@ if __name__ == "__main__":
 
     end_time = time.time()
     elapsed = end_time - start_time
-    print(f"\n⏱️ Total execution time: {elapsed:.2f} seconds")
+    print(f"\nTotal execution time: {elapsed:.2f} seconds")

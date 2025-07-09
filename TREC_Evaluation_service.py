@@ -19,14 +19,12 @@ class EvaluationPipeline:
         self.hybrid_service = HybridSearchService()
 
     def run(self):
-        # Load queries
+
         with open(self.QUERIES_PATH, "r", encoding="utf-8") as f:
             queries = [json.loads(line.strip()) for line in f]
 
-        # 3) Prepare result list
         successful_queries = []
 
-        # Load qrels
         qrels = {}
         with open(self.QRELS_PATH, "r", encoding="utf-8") as f:
             for line in f:
@@ -35,12 +33,12 @@ class EvaluationPipeline:
                     query_id, _, doc_id, *_ = parts
                     qrels.setdefault(query_id, set()).add(doc_id)
 
-        # Perform search and build predictions
+
         predictions = {}
         for q in queries:
             query_id = str(q["id"])
             query_text = q["text"]
-            print(f"\n🔍 Searching for Query ID {query_id}...")
+            print(f"\n Searching for Query ID {query_id}...")
 
             model_type = 'search_with_vector_store'
             top_n = 10
@@ -72,11 +70,11 @@ class EvaluationPipeline:
         all_y_pred = [predictions[qid] for qid in predictions if qid in qrels]
 
 
-        # Evaluate
+
         evaluator = RetrievalEvaluator(len(successful_queries) , len(queries),k=10)
         metrics = evaluator.evaluate(all_y_true, all_y_pred)
 
-        # 6) Save to file
+
         with open("successful_queries.txt", "w") as f_out:
             f_out.write("\n".join(successful_queries))
 
@@ -88,7 +86,7 @@ class EvaluationPipeline:
         with open(self.RESULTS_OUTPUT, "w") as f_out:
             json.dump(metrics, f_out, indent=2)
 
-        print(f"\n✅ Done! Metrics saved to {self.RESULTS_OUTPUT}")
+        print(f"\n Done! Metrics saved to {self.RESULTS_OUTPUT}")
 
 
 
@@ -99,4 +97,4 @@ if __name__ == "__main__":
 
     end_time = time.time()
     elapsed = end_time - start_time
-    print(f"\n⏱️ Total execution time: {elapsed:.2f} seconds")
+    print(f"\n Total execution time: {elapsed:.2f} seconds")
