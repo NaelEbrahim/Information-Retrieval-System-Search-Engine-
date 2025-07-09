@@ -2,7 +2,6 @@ from services.tf_idf_singleton_service import TFIDFSingletonService
 from services.document_service_singleton import DocumentService
 from services.word2vec_singleton_service import Word2VecSingletonService
 from services.hybrid_search_service import HybridSearchService
-from services.vector_store_singleton_service import VectorStoreSingletonService
 
 class SearchEngine:
     def __init__(self):
