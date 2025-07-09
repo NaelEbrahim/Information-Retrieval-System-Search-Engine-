@@ -129,7 +129,7 @@ class HybridSearchService:
 
     def search_faiss_index(self, query, dataset_name, top_n=10):
         """Performs FAISS-based semantic search using Word2Vec only."""
-        print(f"\n🔎 Searching with FAISS for: '{query}' in '{dataset_name}'")
+        print(f"\n Searching with FAISS for: '{query}' in '{dataset_name}'")
 
         w2v_service = self.w2v_service.get_word2vec_service(dataset_name)
         faiss_service = self.vector_store_service
