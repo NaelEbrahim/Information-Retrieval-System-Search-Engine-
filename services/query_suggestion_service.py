@@ -1,7 +1,7 @@
 import sys
 import os
-from itertools import product
 from difflib import get_close_matches
+from itertools import product, islice
 
 # Add project root to Python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -49,8 +49,9 @@ class QuerySuggestionService:
             return suggested_queries[:top_n]
 
         # 5. Generate combinations and add them
-        combinations = list(product(*term_suggestions))
-        
+        combinations = islice(product(*term_suggestions), top_n)
+
+
         # Format and limit the suggestions
         # Avoid adding duplicates of the corrected query
         for combo in combinations:
@@ -91,7 +92,7 @@ if __name__ == '__main__':
     
     # You need to specify a dataset that has a trained Word2Vec model
     # For example: 'antique/train' or 'trec-tot/train'
-    dataset = "antique/train" 
+    dataset = "antique"
     
     test_queries = ["computr", "scince", "machine learnin"]
     for q in test_queries:

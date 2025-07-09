@@ -56,7 +56,7 @@ class Word2VecService:
     def load_model(self, ds):
         """Loads the Word2Vec model and document vectors from disk."""
         print(f"Loading Word2Vec model and vectors for {ds}...")
-        model_dir = os.path.join('database', ds)
+        model_dir = os.path.join('database' , 'word2vec_files' , ds)
         model_file = os.path.join(model_dir, self.model_path)
         vectors_file = os.path.join(model_dir, self.vectors_path)
         
@@ -65,8 +65,9 @@ class Word2VecService:
             self.doc_vectors = joblib.load(vectors_file)
             print("[green]Word2Vec data loaded successfully.[/green]")
             return True
-        except FileNotFoundError:
-            print(f"[red]Word2Vec model or vectors not found for {ds}. Please train the model first.[/red]")
+        except Exception as e:
+            print(e)
+            #print(f"[red]Word2Vec model or vectors not found for {ds}. Please train the model first.[/red]")
             return False
 
     def get_model(self):
@@ -76,6 +77,10 @@ class Word2VecService:
     def get_doc_vectors(self):
         """Returns the loaded document vectors."""
         return self.doc_vectors
+
+    def get_query_vector(self, tokens, model):
+        return self._document_vector(tokens, model)
+
 
 if __name__ == '__main__':
     w2v_service = Word2VecService()

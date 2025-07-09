@@ -96,6 +96,13 @@ class Word2VecSingletonService:
             return len(results), sorted(results, key=lambda x: x["score"], reverse=True)
         return len(results), sorted(results, key=lambda x: x["score"], reverse=True)[:top_n]
 
+
+
+    def get_query_vector(self, tokens, model):
+        return self._document_vector(tokens, model)
+
+
+
 if __name__ == "__main__":
     w2v_singleton_service = Word2VecSingletonService()
     query = "who is Saddam Hussein"

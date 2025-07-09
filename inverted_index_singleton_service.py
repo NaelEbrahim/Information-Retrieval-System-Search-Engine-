@@ -23,7 +23,7 @@ class InvertedIndexSingletonService:
         """Initializes the Inverted Index Service."""
         if not hasattr(self, "initialized"):
             for dataset_name in self.available_datasets:
-                self.subfolder = f"index_files_{dataset_name}"
+                self.subfolder = f"index_files/{dataset_name}"
                 self.folder_paths[dataset_name] = os.path.join(
                     "database", self.subfolder
                 )

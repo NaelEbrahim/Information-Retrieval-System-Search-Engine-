@@ -53,7 +53,7 @@ class TFIDFSingletonService:
         query_vector = vectorizer.transform([" ".join(processed_tokens)])
         if query_vector.count_nonzero() == 0:
             print("Warning: Query vector is all zeros after processing")
-            return []
+            return 0,[]
 
         query_vector = query_vector.reshape(1, -1)
 

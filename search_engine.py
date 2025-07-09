@@ -2,7 +2,7 @@ from services.tf_idf_singleton_service import TFIDFSingletonService
 from services.document_service_singleton import DocumentService
 from services.word2vec_singleton_service import Word2VecSingletonService
 from services.hybrid_search_service import HybridSearchService
-
+from services.vector_store_singleton_service import VectorStoreSingletonService
 
 class SearchEngine:
     def __init__(self):
@@ -12,15 +12,17 @@ class SearchEngine:
         self.w2v_service = Word2VecSingletonService()
         self.hybrid_service = HybridSearchService()
 
-    def search(
-        self,
-        query,
-        top_n=10,
-        dataset_name="trec-tot/2023/train",
-        model_type="tfidf",
-        alpha=0.5,
-        beta=0.5,
-    ):
+
+
+def search(
+            self,
+            query,
+            top_n=10,
+            dataset_name="trec",
+            model_type="tfidf",
+            alpha=0.3,
+            beta=0.7,
+        ):
         """
         Performs a search for a given query and returns the top N results.
         """
@@ -31,6 +33,8 @@ class SearchEngine:
             num_results, results = self.w2v_service.search(query, dataset_name, top_n)
         elif model_type == "hybrid":
             num_results, results = self.hybrid_service.search(query, dataset_name, top_n, alpha, beta)
+        elif model_type == "search_with_vector_store":
+            num_results, results = self.hybrid_service.search_faiss_index(query, dataset_name,top_n)
         else:
             raise ValueError(
                 "Invalid model_type specified. Choose 'tfidf', 'word2vec', or 'hybrid'."
@@ -38,12 +42,16 @@ class SearchEngine:
 
         for result in results:
             doc_details = self.doc_service.get_document(result["doc_id"], dataset_name)
-            if doc_details:
+            if doc_details is None:
+                result["text"] = "(Document not found)"
+            elif isinstance(doc_details, dict):
+                result["text"] = doc_details["text"]
+            else:
                 result["text"] = doc_details.text
 
         return num_results, results
 
-        
+
 
 
 if __name__ == "__main__":
@@ -53,7 +61,7 @@ if __name__ == "__main__":
 
     print(f"\nSearching (Hybrid) for: '{query}' on antique dataset")
     num_results, results = search_engine.search(
-        query, dataset_name="trec-tot/2023/train", model_type="hybrid"
+        query, dataset_name="trec", model_type="hybrid"
     )
     for result in results:
         print(f"  Score: {result['score']:.4f}, Doc ID: {result['doc_id']}")
@@ -64,7 +72,7 @@ if __name__ == "__main__":
 
     print("Searching (TF-IDF) for: ", query)
     search_results_tfidf = search_engine.search(
-        query, dataset_name="trec-tot/2023/train", model_type="tfidf"
+        query, dataset_name="trec", model_type="tfidf"
     )
     print(f"\nTF-IDF Search results for: '{query}'")
     for result in search_results_tfidf:
@@ -75,7 +83,7 @@ if __name__ == "__main__":
 
     print("Searching (Word2Vec) for: ", query)
     search_results_w2v = search_engine.search(
-        query, dataset_name="trec-tot/2023/train", model_type="word2vec"
+        query, dataset_name="trec", model_type="word2vec"
     )
     print(f"\nWord2Vec Search results for: '{query}'")
     for result in search_results_w2v:

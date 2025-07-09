@@ -4,8 +4,8 @@
 <form action="{{ url_for('search') }}" method="get">
     <div class="flex-row">
         <select name="dataset" id="dataset">
-            <option value="trec-tot/2023/train" {% if request.args.get('dataset') == 'trec-tot/2023/train' %}selected{% endif %}>TREC TOT 2023</option>
-            <option value="antique/train" {% if request.args.get('dataset') == 'antique/train' %}selected{% endif %}>Antique</option>
+            <option value="trec" {% if request.args.get('dataset') == 'trec' %}selected{% endif %}>TREC</option>
+            <option value="antique" {% if request.args.get('dataset') == 'antique' %}selected{% endif %}>Antique</option>
         </select>
         <select name="model_type" id="model_type">
             <option value="tfidf" {% if request.args.get('model_type') == 'tfidf' %}selected{% endif %}>TF-IDF</option>
@@ -28,7 +28,7 @@
 </form>
 
 <p id="dataset-info">
-    trec-tot/2023/train is Tip of the tongue: The phenomenon of failing to retrieve something from memory, combined with partial recall and the feeling that retrieval is imminent.
+    trec is Tip of the tongue: The phenomenon of failing to retrieve something from memory, combined with partial recall and the feeling that retrieval is imminent.
 </p>
 
 <script>
@@ -67,9 +67,9 @@
     document.getElementById('dataset').addEventListener('change', function() {
         const dataset = this.value;
         const datasetInfo = document.getElementById('dataset-info');
-        if (dataset === 'trec-tot/2023/train') {
-            datasetInfo.innerHTML = 'trec-tot/2023/train is Tip of the tongue: The phenomenon of failing to retrieve something from memory, combined with partial recall and the feeling that retrieval is imminent.';
-        } else if (dataset === 'antique/train') {
+        if (dataset === 'trec') {
+            datasetInfo.innerHTML = 'trec is Tip of the tongue: The phenomenon of failing to retrieve something from memory, combined with partial recall and the feeling that retrieval is imminent.';
+        } else if (dataset === 'antique') {
             datasetInfo.innerHTML = 'ANTIQUE is a non-factoid question answering dataset based on the questions and answers of Yahoo! Webscope L6';
         }
     });

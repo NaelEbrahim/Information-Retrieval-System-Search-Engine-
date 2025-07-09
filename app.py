@@ -17,7 +17,7 @@ def index():
 def search():
     """Handles the search query and displays results."""
     query = request.args.get('query')
-    dataset = request.args.get('dataset', default='trec-tot/2023/train')
+    dataset = request.args.get('dataset', default='trec')
     model_type = request.args.get('model_type', default='tfidf')
 
     try:
@@ -45,7 +45,7 @@ def document(doc_id):
 def suggest():
     """Returns a list of query suggestions."""
     query = request.args.get('query', '')
-    dataset = request.args.get('dataset', default='trec-tot/2023/train')
+    dataset = request.args.get('dataset', default='trec')
     suggestions = query_suggestion_service.get_suggestions(query, dataset_name=dataset)
     return jsonify(suggestions)
 

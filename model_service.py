@@ -46,11 +46,11 @@ class TFIDFService:
         """Loads the TF-IDF model from disk."""
         print(f"Loading TF-IDF model from disk for dataset: '{ds}'")
         try:
-            self.vectorizer = joblib.load(os.path.join('database', f"{ds}/" + self.vectorizer_path))
-            self.tfidf_matrix = joblib.load(os.path.join('database', f"{ds}/" + self.matrix_path))
+            self.vectorizer = joblib.load(os.path.join('database/tfidf_files', f"{ds}/" + self.vectorizer_path))
+            self.tfidf_matrix = joblib.load(os.path.join('database/tfidf_files', f"{ds}/" + self.matrix_path))
             print(f"[green]TF-IDF model loaded successfully for dataset: '{ds}'[/green]")
         except FileNotFoundError:
-            print(f"[red]TF-IDF model files not found for dataset: '{ds}'. Please train the model first.[/red]")
+            print(f"[red]TF-Idf files not found for {ds}. Please train the model first.[/red]")
             return False
         return True
 

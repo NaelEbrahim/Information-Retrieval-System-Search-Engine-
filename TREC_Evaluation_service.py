@@ -1,0 +1,102 @@
+import json
+import time
+from services.tf_idf_singleton_service import TFIDFSingletonService
+from services.word2vec_singleton_service import Word2VecSingletonService
+from services.hybrid_search_service import HybridSearchService
+from services.document_service_singleton import DocumentService
+from Metrics_service import RetrievalEvaluator
+
+
+class EvaluationPipeline:
+    def __init__(self):
+        self.DATASET = 'trec'
+        self.QUERIES_PATH = r"C:\Users\NAEL PC\.ir_datasets\trec-tot\2023\train\queries.jsonl"
+        self.QRELS_PATH = r"C:\Users\NAEL PC\.ir_datasets\trec-tot\2023\train\qrel.txt"
+        self.RESULTS_OUTPUT = "evaluation_results.json"
+        self.doc_service = DocumentService()
+        self.tfidf_service = TFIDFSingletonService()
+        self.w2v_service = Word2VecSingletonService()
+        self.hybrid_service = HybridSearchService()
+
+    def run(self):
+        # Load queries
+        with open(self.QUERIES_PATH, "r", encoding="utf-8") as f:
+            queries = [json.loads(line.strip()) for line in f]
+
+        # 3) Prepare result list
+        successful_queries = []
+
+        # Load qrels
+        qrels = {}
+        with open(self.QRELS_PATH, "r", encoding="utf-8") as f:
+            for line in f:
+                parts = line.strip().split()
+                if len(parts) >= 3:
+                    query_id, _, doc_id, *_ = parts
+                    qrels.setdefault(query_id, set()).add(doc_id)
+
+        # Perform search and build predictions
+        predictions = {}
+        for q in queries:
+            query_id = str(q["id"])
+            query_text = q["text"]
+            print(f"\n🔍 Searching for Query ID {query_id}...")
+
+            model_type = 'search_with_vector_store'
+            top_n = 10
+
+            if model_type == "tfidf":
+                _, results = self.tfidf_service.search(query_text, self.DATASET, top_n)
+            elif model_type == "word2vec":
+                _, results = self.w2v_service.search(query_text, self.DATASET, top_n)
+            elif model_type == "hybrid":
+                _, results = self.hybrid_service.search(query_text, self.DATASET, top_n, 0.3, 0.7)
+            elif model_type == "search_with_vector_store":
+                _, results = self.hybrid_service.search_faiss_index(query_text, self.DATASET,top_n)
+            else:
+                continue
+
+            ranked_doc_ids = [res['doc_id'] for res in results]
+            predictions[query_id] = ranked_doc_ids
+
+            retrieved_doc_ids = set(ranked_doc_ids)
+            expected_doc_ids = qrels.get(query_id, set())
+
+            if expected_doc_ids & retrieved_doc_ids:
+                print('match')
+                successful_queries.append(query_id)
+
+
+        # Convert qrels and predictions into lists
+        all_y_true = [list(qrels[qid]) for qid in predictions if qid in qrels]
+        all_y_pred = [predictions[qid] for qid in predictions if qid in qrels]
+
+
+        # Evaluate
+        evaluator = RetrievalEvaluator(len(successful_queries) , len(queries),k=10)
+        metrics = evaluator.evaluate(all_y_true, all_y_pred)
+
+        # 6) Save to file
+        with open("successful_queries.txt", "w") as f_out:
+            f_out.write("\n".join(successful_queries))
+
+
+        print("\nEvaluation Metrics:")
+        for k, v in metrics.items():
+            print(f"{k}: {v:.4f}")
+
+        with open(self.RESULTS_OUTPUT, "w") as f_out:
+            json.dump(metrics, f_out, indent=2)
+
+        print(f"\n✅ Done! Metrics saved to {self.RESULTS_OUTPUT}")
+
+
+
+if __name__ == "__main__":
+    start_time = time.time()
+
+    EvaluationPipeline().run()
+
+    end_time = time.time()
+    elapsed = end_time - start_time
+    print(f"\n⏱️ Total execution time: {elapsed:.2f} seconds")
