@@ -51,7 +51,7 @@ class AntiqueEvaluationPipeline:
             query_text = q["text"]
             print(f"\n Searching for Query ID {query_id}...")
 
-            model_type = 'word2vec'
+            model_type = 'search_with_vector_store'
             top_n = 10
 
             if model_type == "tfidf":
@@ -62,6 +62,8 @@ class AntiqueEvaluationPipeline:
                 _, results = self.hybrid_service.search(query_text, self.DATASET, top_n, 0.3, 0.7)
             elif model_type == "search_with_vector_store":
                 _, results = self.hybrid_service.search_faiss_index(query_text, self.DATASET,top_n)
+            elif model_type == "hybrid_with_vector_store":
+                _, results = self.hybrid_service.search_enhanced_fast(query_text, self.DATASET,top_n)
             else:
                 continue
 

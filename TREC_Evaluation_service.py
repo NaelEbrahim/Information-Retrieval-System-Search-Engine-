@@ -40,7 +40,7 @@ class EvaluationPipeline:
             query_text = q["text"]
             print(f"\n Searching for Query ID {query_id}...")
 
-            model_type = 'search_with_vector_store'
+            model_type = 'vector_store'
             top_n = 10
 
             if model_type == "tfidf":
@@ -49,8 +49,10 @@ class EvaluationPipeline:
                 _, results = self.w2v_service.search(query_text, self.DATASET, top_n)
             elif model_type == "hybrid":
                 _, results = self.hybrid_service.search(query_text, self.DATASET, top_n, 0.3, 0.7)
-            elif model_type == "search_with_vector_store":
+            elif model_type == "vector_store":
                 _, results = self.hybrid_service.search_faiss_index(query_text, self.DATASET,top_n)
+            elif model_type == "hybrid_with_vector_store":
+                _, results = self.hybrid_service.search_enhanced_fast(query_text, self.DATASET,top_n)
             else:
                 continue
 

@@ -13,6 +13,7 @@ from services.document_service_singleton import DocumentService
 from services.tf_idf_singleton_service import TFIDFSingletonService
 from services.word2vec_singleton_service import Word2VecSingletonService
 from services.vector_store_singleton_service import VectorStoreSingletonService
+from services.query_expander_service import QueryExpander
 
 class HybridSearchService:
     def __init__(self):
@@ -26,8 +27,6 @@ class HybridSearchService:
 
     def search(self, query, dataset_name, top_n=10, alpha=0.3, beta=0.7):
         """Performs a hybrid search for a given query on a specific dataset."""
-        print(f"\nSearching for: '{query}' in '{dataset_name}'")
-
         tfidf_service = self.tfidf_service.get_tfidf_service(dataset_name)
         w2v_service = self.w2v_service.get_word2vec_service(dataset_name)
 
@@ -53,8 +52,7 @@ class HybridSearchService:
             return []
 
         processed_tokens = self.preprocessor.process(query)
-        processed_tokens = expand_query_terms_smart(processed_tokens, w2v_model)
-        print(f"Processed query tokens: {processed_tokens}")
+        # processed_tokens = QueryExpander.expand_query_terms(processed_tokens, w2v_model)
 
         candidate_indices = set()
         for token in processed_tokens:
@@ -63,16 +61,6 @@ class HybridSearchService:
         
         candidate_indices = list(candidate_indices)
 
-        if not candidate_indices:
-            print("🔍 Using FAISS index as fallback (no candidates from inverted index)")
-            query_vector_w2v = w2v_service.get_query_vector(processed_tokens, w2v_model)
-            if np.all(query_vector_w2v == 0):
-                print(" Skipping query: no valid Word2Vec representation.")
-                return 0, []
-            faiss_results = self.vector_store_service.search(query_vector_w2v, dataset_name, top_n)
-            return len(faiss_results), [
-                {"doc_id": doc_id, "score": score} for doc_id, score in faiss_results
-            ]
 
         if not candidate_indices:
                 return 0,[]
@@ -126,11 +114,72 @@ class HybridSearchService:
             print(f"Error calculating hybrid search: {str(e)}")
             return 0, []
 
+#===============================================
+    def search_enhanced_fast(self, query, dataset_name, top_n=10, alpha=0.3, beta=0.7):
+        tfidf_service = self.tfidf_service.get_tfidf_service(dataset_name)
+        w2v_service = self.w2v_service.get_word2vec_service(dataset_name)
+        faiss_service = self.vector_store_service
+        index_service = self.index_service
+
+
+        processed_tokens = self.preprocessor.process(query)
+        # processed_tokens = QueryExpander.expand_query_terms(processed_tokens, w2v_service.get_model())
+        query_str = " ".join(processed_tokens)
+        query_vector_w2v = w2v_service.get_query_vector(processed_tokens, w2v_service.get_model())
+
+        if np.all(query_vector_w2v == 0):
+            print(" Skipping query: No valid Word2Vec representation.")
+            return 0, []
+
+
+        faiss_top_k = 1000
+        faiss_results = faiss_service.search(query_vector_w2v, dataset_name, faiss_top_k)
+
+
+        index_to_doc_id = index_service.index_to_doc_ids[dataset_name]
+
+        candidate_indices = []
+        candidate_doc_ids = []
+        for faiss_idx_str, dist in faiss_results:
+            faiss_idx = int(faiss_idx_str)
+            doc_id = index_to_doc_id.get(faiss_idx)
+            if doc_id is not None:
+                candidate_indices.append(faiss_idx)
+                candidate_doc_ids.append(doc_id)
+
+        if not candidate_indices:
+            print(" No valid document candidates from FAISS.")
+            return 0, []
+
+        tfidf_matrix = tfidf_service.get_tfidf_matrix()
+        query_vector_tfidf = tfidf_service.get_vectorizer().transform([query_str])
+        tfidf_candidates = tfidf_matrix[candidate_indices]
+        tfidf_scores = cosine_similarity(query_vector_tfidf, tfidf_candidates).flatten()
+
+        tfidf_norm = (tfidf_scores - tfidf_scores.min()) / (tfidf_scores.max() - tfidf_scores.min() + 1e-9)
+        vector_scores = {int(idx): 1 / (1 + dist) for idx, dist in faiss_results}
+
+
+        results = []
+        for i, candidate_idx in enumerate(candidate_indices):
+            doc_id = index_to_doc_id.get(candidate_idx)
+            if not doc_id:
+                continue
+
+            score = alpha * tfidf_norm[i] + beta * vector_scores.get(candidate_idx, 0)
+            results.append({
+                "doc_id": doc_id,"score": score,
+                "tfidf_score": tfidf_norm[i],
+                "vector_score": vector_scores.get(candidate_idx, 0)
+            })
+
+        sorted_results = sorted(results, key=lambda x: -x["score"])
+        return len(sorted_results), sorted_results[:top_n] if top_n != -1 else sorted_results
+
+#===============================================
 
     def search_faiss_index(self, query, dataset_name, top_n=10):
         """Performs FAISS-based semantic search using Word2Vec only."""
-        print(f"\n Searching with FAISS for: '{query}' in '{dataset_name}'")
-
         w2v_service = self.w2v_service.get_word2vec_service(dataset_name)
         faiss_service = self.vector_store_service
         index_service = self.index_service
@@ -141,8 +190,7 @@ class HybridSearchService:
             return 0, []
 
         processed_tokens = self.preprocessor.process(query)
-        # processed_tokens = expand_query_terms_smart(processed_tokens, w2v_model)
-        # print(f"Processed query tokens: {processed_tokens}")
+        processed_tokens = QueryExpander.expand_query_terms(processed_tokens, w2v_model)
 
         query_vector = w2v_service.get_query_vector(processed_tokens, w2v_model)
         if np.all(query_vector == 0):
@@ -186,61 +234,3 @@ if __name__ == "__main__":
     results_trec = hybrid_search.search(query_trec, "trec-tot/2023/train")
     for result in results_trec:
         print(f"  Score: {result['score']:.4f}, Doc ID: {result['doc_id']}")
-
-
-def is_valid_term(term):
-    """
-    Filter out invalid query expansion terms.
-    Returns True only if term is alphabetic and not a stopword.
-    """
-    # Basic filtering
-    if len(term) < 3 or not term.isalpha():
-        return False
-
-    # Optional: remove stopwords
-    from nltk.corpus import stopwords
-    STOPWORDS = set(stopwords.words('english'))
-
-    if term.lower() in STOPWORDS:
-        return False
-
-    return True
-
-
-def expand_query_terms_smart(query_terms, w2v_model, max_expansions=1, similarity_threshold=0.7):
-    valid_query_terms = [term for term in query_terms if term in w2v_model.wv]
-
-    if not valid_query_terms:
-        return query_terms
-
-    try:
-        query_vector = np.mean([w2v_model.wv[term] for term in valid_query_terms], axis=0)
-    except Exception as e:
-        print(f"Error computing query vector: {e}")
-        return query_terms
-
-    expanded_terms = list(set(query_terms))  # Avoid duplicates
-
-    for term in valid_query_terms:
-        similar_words = w2v_model.wv.most_similar(term, topn=10)  # Get more candidates
-
-        added = 0
-        for word, score in similar_words:
-            if added >= max_expansions:
-                break
-            if word in expanded_terms:
-                continue
-            if not is_valid_term(word):
-                continue
-
-            # Compute similarity with query vector
-            try:
-                sim = cosine_similarity([query_vector], [w2v_model.wv[word]])[0][0]
-                if sim >= similarity_threshold:
-                    expanded_terms.append(word)
-                    added += 1
-            except:
-                continue
-
-    return expanded_terms
-

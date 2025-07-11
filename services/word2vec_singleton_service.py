@@ -9,6 +9,7 @@ from services.document_service_singleton import DocumentService
 from preprocessor import Preprocessor
 from sklearn.metrics.pairwise import cosine_similarity
 from inverted_index_singleton_service import InvertedIndexSingletonService
+from services.query_expander_service import QueryExpander
 
 class Word2VecSingletonService:
     _initialized = False
@@ -40,7 +41,12 @@ class Word2VecSingletonService:
         return self.word2vec_services[dataset_name]
 
     def search(self, query, dataset_name, top_n=10):
+        w2v_service = self.get_word2vec_service(dataset_name)
+        model = w2v_service.get_model()
+        doc_vectors = w2v_service.get_doc_vectors()
+
         processed_tokens = self.preprocessor.process(query)
+        # processed_tokens = QueryExpander.expand_query_terms(processed_tokens, model)
         candidate_indices = set()
         for token in processed_tokens:
             if token in self.index_service.inverted_indices[dataset_name]:
@@ -48,9 +54,6 @@ class Word2VecSingletonService:
         
         candidate_indices = list(candidate_indices)
         
-        w2v_service = self.get_word2vec_service(dataset_name)
-        model = w2v_service.get_model()
-        doc_vectors = w2v_service.get_doc_vectors()
 
         if model is None or doc_vectors is None:
             print(f"Word2Vec model for {dataset_name} is not loaded.")
