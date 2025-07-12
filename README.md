@@ -37,6 +37,84 @@ The system is composed of several key components:
     *   **`ANTIQUE_Evaluation_service.py`:** Provides tools for evaluating the system on the ANTIQUE dataset.
     *   **`Metrics_service.py`:** Calculates standard IR metrics such as Precision, Recall, and Mean Average Precision (MAP).
 
+## Folder Structure
+
+```
+.
+├── README.md
+├── app.py
+├── database
+│   ├── index_files
+│   │   ├── antique
+│   │   │   ├── doc_id_to_index.joblib
+│   │   │   ├── doc_ids.joblib
+│   │   │   ├── faiss.index
+│   │   │   ├── inverted_index.joblib
+│   │   │   └── train
+│   │   └── trec
+│   │       ├── doc_id_to_index.joblib
+│   │       ├── doc_ids.joblib
+│   │       ├── faiss.index
+│   │       └── inverted_index.joblib
+│   ├── tfidf_files
+│   │   ├── antique
+│   │   │   ├── tfidf_matrix.joblib
+│   │   │   └── tfidf_vectorizer.joblib
+│   │   └── trec
+│   │       ├── tfidf_matrix.joblib
+│   │       └── tfidf_vectorizer.joblib
+│   └── word2vec_files
+│       ├── antique
+│       │   ├── doc_vectors.joblib
+│       │   └── word2vec.model
+│       └── trec
+│           ├── doc_vectors.joblib
+│           ├── word2vec.model
+│           ├── word2vec.model.syn1neg.npy
+│           └── word2vec.model.wv.vectors.npy
+├── model_building_documentation.txt
+├── requirements.txt
+├── scripts
+│   ├── __init__.py
+│   ├── build_index.py
+│   └── load_datasets.py
+├── services
+│   ├── __init__.py
+│   ├── evaluation
+│   │   ├── antique_evaluation_service.py
+│   │   ├── metrics_service.py
+│   │   └── trec_evaluation_service.py
+│   ├── helpers
+│   │   ├── query_expander_service.py
+│   │   └── query_suggestion_service.py
+│   ├── indexing
+│   │   └── inverted_index_singleton_service.py
+│   ├── modeling
+│   │   ├── tfidf_service.py
+│   │   └── word2vec_service.py
+│   ├── nlp
+│   │   ├── preprocessor.py
+│   │   └── spell_corrector.py
+│   ├── retrieval
+│   │   ├── document_service_singleton.py
+│   │   ├── hybrid_search_service.py
+│   │   ├── tf_idf_singleton_service.py
+│   │   ├── vector_store_singleton_service.py
+│   │   └── word2vec_singleton_service.py
+│   └── search
+│       └── search_engine.py
+├── static
+│   └── css
+│       └── style.css
+├── structure.md
+└── templates
+    ├── base.html
+    ├── document.html
+    ├── index.html
+    ├── not_found.html
+    └── results.html
+```
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -44,7 +122,7 @@ The system is composed of several key components:
 *   Python 3.8+
 *   Pip for package management
 
-### Installation
+### Installation & Setup
 
 1.  **Clone the repository:**
     ```bash
@@ -56,29 +134,39 @@ The system is composed of several key components:
     ```bash
     pip install -r requirements.txt
     ```
-    *(Note: A `requirements.txt` file is not present in the project. I will add a step to generate it)*
 
-### Setup
+3.  **Build Models and Indices:**
+    Before running the application, you must build the necessary models. Please follow the instructions in the **"Building Required Models and Indices"** section below.
 
-1.  **Download the datasets:**
-    The system is designed to work with standard IR datasets like TREC and ANTIQUE. You will need to download these datasets and place them in the appropriate directories.
-
-2.  **Build the indexes:**
-    Before running the application, you need to build the inverted index, TF-IDF matrix, and Word2Vec models for your chosen datasets.
+4.  **Run the Application:**
+    Once the setup is complete, you can run the Flask application:
     ```bash
-    python scripts/load_datasets.py
-    python scripts/build_index.py
+    python app.py
+    ```
+    The application will be available at `http://127.0.0.1:5000`.
+
+## 🛠️ Building Required Models and Indices
+
+This is a mandatory one-time setup process. Before running the application for the first time, you must build the data models. This involves training the TF-IDF and Word2Vec models and then creating the inverted index.
+
+**Run the following commands from the project's root directory in the exact order shown:**
+
+1.  **Train TF-IDF Models:**
+    ```bash
+    python -m services.modeling.tfidf_service
     ```
 
-### Running the Application
+2.  **Train Word2Vec Models:**
+    ```bash
+    python -m services.modeling.word2vec_service
+    ```
 
-Once the setup is complete, you can run the Flask application:
+3.  **Build the Inverted Index:**
+    ```bash
+    python -m scripts.build_index
+    ```
 
-```bash
-python app.py
-```
-
-The application will be available at `http://127.0.0.1:5000`.
+> **Note:** For a detailed explanation of the model building and loading architecture, please see the `model_building_documentation.txt` file in this repository.
 
 ## Usage
 
@@ -94,8 +182,8 @@ The application will be available at `http://127.0.0.1:5000`.
 The evaluation services can be used to measure the performance of the retrieval models. You can run the evaluation scripts from the command line:
 
 ```bash
-python ANTIQUE_Evaluation_service.py
-python TREC_Evaluation_service.py
+python -m services.evaluation.antique_evaluation_service
+python -m services.evaluation.trec_evaluation_service
 ```
 
 ## 🛠️ Technologies Used
@@ -114,6 +202,3 @@ python TREC_Evaluation_service.py
 *   **User feedback and relevance feedback:** Allow users to provide feedback on search results to improve future rankings.
 *   **Distributed indexing and search:** To support larger datasets and higher query loads.
 *   **More comprehensive evaluation metrics:** And visualization of evaluation results.
-
----
-*This README was generated by the Gemini CLI.*
