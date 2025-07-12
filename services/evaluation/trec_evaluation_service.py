@@ -7,7 +7,7 @@ from services.retrieval.document_service_singleton import DocumentService
 from services.evaluation.metrics_service import RetrievalEvaluator
 
 
-class EvaluationPipeline:
+class TrecEvaluationPipeline:
     def __init__(self):
         self.DATASET = 'trec'
         self.QUERIES_PATH = r"C:\Users\NAEL PC\.ir_datasets\trec-tot\2023\train\queries.jsonl"
@@ -95,7 +95,7 @@ class EvaluationPipeline:
 if __name__ == "__main__":
     start_time = time.time()
 
-    EvaluationPipeline().run()
+    TrecEvaluationPipeline().run()
 
     end_time = time.time()
     elapsed = end_time - start_time
