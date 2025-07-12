@@ -32,7 +32,7 @@ class SearchEngine:
         elif model_type == "hybrid":
             num_results, results = self.hybrid_service.search(query, dataset_name, top_n, alpha, beta)
         elif model_type == "search_with_vector_store":
-            num_results, results = self.hybrid_service.search_faiss_index(query, dataset_name, top_n)
+            num_results, results = self.hybrid_service.search_enhanced_fast(query, dataset_name, top_n)
         else:
             raise ValueError(
                 "Invalid model_type specified. Choose 'tfidf', 'word2vec', 'hybrid', or 'search_with_vector_store'."
