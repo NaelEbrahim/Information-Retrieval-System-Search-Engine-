@@ -1,3 +1,4 @@
+from rich import print
 import os
 import faiss
 import joblib
@@ -62,11 +63,12 @@ class VectorStoreSingletonService:
         print(f"[blue]FAISS index built and saved for {dataset_name}[/blue]")
 
     def search(self, query_vector, dataset_name, top_n=10):
-        if dataset_name not in self.vector_stores:
-            self._init_dataset(dataset_name)
-
         index = self.vector_stores[dataset_name]
         doc_ids = self.doc_ids_map[dataset_name]
 
         D, I = index.search(np.array([query_vector]), top_n)
         return [(doc_ids[idx], float(D[0][i])) for i, idx in enumerate(I[0])]
+
+
+if __name__ == "__main__":
+    vector_store_service = VectorStoreSingletonService()
