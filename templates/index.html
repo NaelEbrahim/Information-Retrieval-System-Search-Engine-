@@ -11,6 +11,7 @@
             <option value="tfidf" {% if request.args.get('model_type') == 'tfidf' %}selected{% endif %}>TF-IDF</option>
             <option value="word2vec" {% if request.args.get('model_type') == 'word2vec' %}selected{% endif %}>Word2Vec</option>
             <option value="hybrid" {% if request.args.get('model_type') == 'hybrid' %}selected{% endif %}>Hybrid</option>
+            <option value="search_with_vector_store" {% if request.args.get('model_type') == 'search_with_vector_store' %}selected{% endif %}>Search with Vector Store</option>
         </select>
         <label for="alpha">Result Count:</label>
         <select name="top_n" id="top_n">
