@@ -3,6 +3,7 @@ from services.document_service_singleton import DocumentService
 from services.word2vec_singleton_service import Word2VecSingletonService
 from services.hybrid_search_service import HybridSearchService
 
+
 class SearchEngine:
     def __init__(self):
         """Initializes the Search Engine."""
@@ -11,17 +12,15 @@ class SearchEngine:
         self.w2v_service = Word2VecSingletonService()
         self.hybrid_service = HybridSearchService()
 
-
-
-def search(
-            self,
-            query,
-            top_n=10,
-            dataset_name="trec",
-            model_type="tfidf",
-            alpha=0.3,
-            beta=0.7,
-        ):
+    def search(
+        self,
+        query,
+        top_n=10,
+        dataset_name="trec",
+        model_type="tfidf",
+        alpha=0.3,
+        beta=0.7,
+    ):
         """
         Performs a search for a given query and returns the top N results.
         """
@@ -33,10 +32,10 @@ def search(
         elif model_type == "hybrid":
             num_results, results = self.hybrid_service.search(query, dataset_name, top_n, alpha, beta)
         elif model_type == "search_with_vector_store":
-            num_results, results = self.hybrid_service.search_faiss_index(query, dataset_name,top_n)
+            num_results, results = self.hybrid_service.search_faiss_index(query, dataset_name, top_n)
         else:
             raise ValueError(
-                "Invalid model_type specified. Choose 'tfidf', 'word2vec', or 'hybrid'."
+                "Invalid model_type specified. Choose 'tfidf', 'word2vec', 'hybrid', or 'search_with_vector_store'."
             )
 
         for result in results:
@@ -49,8 +48,6 @@ def search(
                 result["text"] = doc_details.text
 
         return num_results, results
-
-
 
 
 if __name__ == "__main__":
@@ -71,7 +68,7 @@ if __name__ == "__main__":
 
     print("Searching (TF-IDF) for: ", query)
     search_results_tfidf = search_engine.search(
-        query, dataset_name="trec", model_type="tfidf"
+        query, dataset_name="trec", model_type="search_with_vector_store"
     )
     print(f"\nTF-IDF Search results for: '{query}'")
     for result in search_results_tfidf:
