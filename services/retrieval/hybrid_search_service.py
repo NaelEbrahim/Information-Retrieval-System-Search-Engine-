@@ -2,18 +2,13 @@ from rich import print
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import MinMaxScaler
-import sys
-import os
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-from inverted_index_singleton_service import InvertedIndexSingletonService
-from preprocessor import Preprocessor
-from services.document_service_singleton import DocumentService
-from services.tf_idf_singleton_service import TFIDFSingletonService
-from services.word2vec_singleton_service import Word2VecSingletonService
-from services.vector_store_singleton_service import VectorStoreSingletonService
-from services.query_expander_service import QueryExpander
+from services.indexing.inverted_index_singleton_service import InvertedIndexSingletonService
+from services.nlp.preprocessor import Preprocessor
+from services.retrieval.document_service_singleton import DocumentService
+from services.retrieval.tf_idf_singleton_service import TFIDFSingletonService
+from services.retrieval.word2vec_singleton_service import Word2VecSingletonService
+from services.retrieval.vector_store_singleton_service import VectorStoreSingletonService
+from services.helpers.query_expander_service import QueryExpander
 
 class HybridSearchService:
     def __init__(self):
@@ -51,7 +46,11 @@ class HybridSearchService:
             )
             return []
 
+        print(f'Search using "{query}"')
+        print(f'\tSearching on dataset "{dataset_name}"')
+        print(f'\tUsing Hybrid model')
         processed_tokens = self.preprocessor.process(query)
+        print(f'\tQuery tokens "{processed_tokens}"')
         # processed_tokens = QueryExpander.expand_query_terms(processed_tokens, w2v_model)
 
         candidate_indices = set()
@@ -190,7 +189,12 @@ class HybridSearchService:
             return 0, []
 
         processed_tokens = self.preprocessor.process(query)
+        print(f'Search using "{query}"')
+        print(f'\tSearching on dataset "{dataset_name}"')
+        print(f'\tUsing Search with FAISS model')
+        print(f'\tQuery tokens "{processed_tokens}"')
         processed_tokens = QueryExpander.expand_query_terms(processed_tokens, w2v_model)
+        print(f'\tExpanded Query tokens "{processed_tokens}"')
 
         query_vector = w2v_service.get_query_vector(processed_tokens, w2v_model)
         if np.all(query_vector == 0):

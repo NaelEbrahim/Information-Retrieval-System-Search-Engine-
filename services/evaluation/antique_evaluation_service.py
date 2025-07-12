@@ -1,10 +1,10 @@
 import json
 import time
-from services.tf_idf_singleton_service import TFIDFSingletonService
-from services.word2vec_singleton_service import Word2VecSingletonService
-from services.hybrid_search_service import HybridSearchService
-from services.document_service_singleton import DocumentService
-from Metrics_service import RetrievalEvaluator
+from services.retrieval.tf_idf_singleton_service import TFIDFSingletonService
+from services.retrieval.word2vec_singleton_service import Word2VecSingletonService
+from services.retrieval.hybrid_search_service import HybridSearchService
+from services.retrieval.document_service_singleton import DocumentService
+from services.evaluation.metrics_service import RetrievalEvaluator
 
 
 class AntiqueEvaluationPipeline:

@@ -1,13 +1,10 @@
 from rich import print
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import numpy as np
-from model_service import TFIDFService
-from services.document_service_singleton import DocumentService
-from preprocessor import Preprocessor
 from sklearn.metrics.pairwise import cosine_similarity
-from inverted_index_singleton_service import InvertedIndexSingletonService
+from services.modeling.tfidf_service import TFIDFService
+from services.retrieval.document_service_singleton import DocumentService
+from services.nlp.preprocessor import Preprocessor
+from services.indexing.inverted_index_singleton_service import InvertedIndexSingletonService
 
 class TFIDFSingletonService:
     _initialized = False
@@ -39,12 +36,16 @@ class TFIDFSingletonService:
         return self.tf_idf_services[dataset_name]
 
     def search(self, query, dataset_name, top_n=10):
+        print(f'Search using "{query}"')
+        print(f'\tSearching on dataset "{dataset_name}"')
+        print(f'\tUsing TF-IDF model')
         processed_tokens = self.preprocessor.process(query)
+        print(f'\tQuery tokens "{processed_tokens}"')
         candidate_indices = set()
         for token in processed_tokens:
             if token in self.index_service.inverted_indices[dataset_name]:
                 candidate_indices.update(self.index_service.inverted_indices[dataset_name][token])
-
+        
         candidate_indices = list(candidate_indices)
 
         vectorizer = self.get_tfidf_service(dataset_name).get_vectorizer()
@@ -62,7 +63,6 @@ class TFIDFSingletonService:
             return 0, []
 
         candidate_doc_vectors = tfidf_matrix[candidate_indices]
-
         try:
             cosine_similarities = cosine_similarity(query_vector, candidate_doc_vectors).flatten()
             return self._get_top_results(cosine_similarities, top_n, dataset_name, candidate_indices)

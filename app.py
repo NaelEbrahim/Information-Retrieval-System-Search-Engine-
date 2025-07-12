@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
-from search_engine import SearchEngine
-from services.query_suggestion_service import QuerySuggestionService
+from services.retrieval.document_service_singleton import DocumentService
+from services.search.search_engine import SearchEngine
+from services.helpers.query_suggestion_service import QuerySuggestionService
 
 app = Flask('__main__')
 
@@ -19,6 +20,10 @@ def search():
     query = request.args.get('query')
     dataset = request.args.get('dataset', default='trec')
     model_type = request.args.get('model_type', default='tfidf')
+    if (dataset not in DocumentService.available_datasets):
+        return render_template('index.html', error="Invalid dataset name.")
+    if (model_type not in ['tfidf', 'word2vec', 'hybrid', 'search_with_vector_store']):
+        return render_template('index.html', error="Invalid model type.")
 
     try:
         top_n = int(request.args.get('top_n', default=10))
@@ -46,6 +51,8 @@ def suggest():
     """Returns a list of query suggestions."""
     query = request.args.get('query', '')
     dataset = request.args.get('dataset', default='trec')
+    if (dataset not in DocumentService.available_datasets):
+        return jsonify([])
     suggestions = query_suggestion_service.get_suggestions(query, dataset_name=dataset)
     return jsonify(suggestions)
 

@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+{% if error %}
+    <p class="error">{{ error }}</p>
+{% endif %}
+
 <form action="{{ url_for('search') }}" method="get">
     <div class="flex-row">
         <select name="dataset" id="dataset">

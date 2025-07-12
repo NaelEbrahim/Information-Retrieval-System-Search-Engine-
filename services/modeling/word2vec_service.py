@@ -3,8 +3,8 @@ import os
 import joblib
 import numpy as np
 from gensim.models import Word2Vec
-from services.document_service_singleton import DocumentService
-from preprocessor import Preprocessor
+from services.retrieval.document_service_singleton import DocumentService
+from services.nlp.preprocessor import Preprocessor
 
 class Word2VecService:
     def __init__(self, model_path='word2vec.model', vectors_path='doc_vectors.joblib'):

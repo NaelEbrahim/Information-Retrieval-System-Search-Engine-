@@ -1,14 +1,8 @@
-import sys
-import os
 from difflib import get_close_matches
 from itertools import product, islice
-
-# Add project root to Python path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from services.word2vec_singleton_service import Word2VecSingletonService
-from preprocessor import Preprocessor
-from spell_corrector import SpellCorrector
+from services.retrieval.word2vec_singleton_service import Word2VecSingletonService
+from services.nlp.preprocessor import Preprocessor
+from services.nlp.spell_corrector import SpellCorrector
 
 class QuerySuggestionService:
     def __init__(self):

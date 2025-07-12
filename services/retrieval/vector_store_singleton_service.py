@@ -3,8 +3,8 @@ import os
 import faiss
 import joblib
 import numpy as np
-from services.word2vec_singleton_service import Word2VecSingletonService
-from services.document_service_singleton import DocumentService
+from services.retrieval.word2vec_singleton_service import Word2VecSingletonService
+from services.retrieval.document_service_singleton import DocumentService
 
 
 class VectorStoreSingletonService:

@@ -2,8 +2,8 @@ from rich import print
 import os
 import joblib
 from sklearn.feature_extraction.text import TfidfVectorizer
-from services.document_service_singleton import DocumentService
-from preprocessor import Preprocessor
+from services.retrieval.document_service_singleton import DocumentService
+from services.nlp.preprocessor import Preprocessor
 
 class TFIDFService:
     def __init__(self, vectorizer_path='tfidf_vectorizer.joblib', matrix_path='tfidf_matrix.joblib'):
@@ -46,6 +46,9 @@ class TFIDFService:
         """Loads the TF-IDF model from disk."""
         print(f"Loading TF-IDF model from disk for dataset: '{ds}'")
         try:
+            import sys
+            from services.nlp import preprocessor
+            sys.modules['preprocessor'] = preprocessor
             self.vectorizer = joblib.load(os.path.join('database/tfidf_files', f"{ds}/" + self.vectorizer_path))
             self.tfidf_matrix = joblib.load(os.path.join('database/tfidf_files', f"{ds}/" + self.matrix_path))
             print(f"[green]TF-IDF model loaded successfully for dataset: '{ds}'[/green]")

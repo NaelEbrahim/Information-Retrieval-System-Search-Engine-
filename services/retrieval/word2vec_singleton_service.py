@@ -1,15 +1,11 @@
 
 from rich import print
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import numpy as np
-from word2vec_service import Word2VecService
-from services.document_service_singleton import DocumentService
-from preprocessor import Preprocessor
 from sklearn.metrics.pairwise import cosine_similarity
-from inverted_index_singleton_service import InvertedIndexSingletonService
-from services.query_expander_service import QueryExpander
+from services.modeling.word2vec_service import Word2VecService
+from services.retrieval.document_service_singleton import DocumentService
+from services.nlp.preprocessor import Preprocessor
+from services.indexing.inverted_index_singleton_service import InvertedIndexSingletonService
 
 class Word2VecSingletonService:
     _initialized = False
@@ -45,7 +41,11 @@ class Word2VecSingletonService:
         model = w2v_service.get_model()
         doc_vectors = w2v_service.get_doc_vectors()
 
+        print(f'Search using "{query}"')
+        print(f'\tSearching on dataset "{dataset_name}"')
+        print(f'\tUsing Word2Vec model')
         processed_tokens = self.preprocessor.process(query)
+        print(f'\tQuery tokens "{processed_tokens}"')
         # processed_tokens = QueryExpander.expand_query_terms(processed_tokens, model)
         candidate_indices = set()
         for token in processed_tokens:

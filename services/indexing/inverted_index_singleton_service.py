@@ -3,7 +3,7 @@ import os
 import joblib
 from collections import defaultdict
 from tqdm import tqdm
-from services.document_service_singleton import DocumentService
+from services.retrieval.document_service_singleton import DocumentService
 
 
 class InvertedIndexSingletonService:
