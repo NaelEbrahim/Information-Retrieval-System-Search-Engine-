@@ -165,6 +165,11 @@ This is a mandatory one-time setup process. Before running the application for t
     ```bash
     python -m scripts.build_index
     ```
+    
+4.  **Build Vector Stores:**
+    ```bash
+    python -m services.retrieval.vector_store_singleton_service
+    ```
 
 > **Note:** For a detailed explanation of the model building and loading architecture, please see the `model_building_documentation.txt` file in this repository.
 
