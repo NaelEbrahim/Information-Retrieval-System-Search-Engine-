@@ -151,22 +151,32 @@ This is a mandatory one-time setup process. Before running the application for t
 
 **Run the following commands from the project's root directory in the exact order shown:**
 
-1.  **Train TF-IDF Models:**
+1.  **Load NLTK:**
+    ```bash
+    python -m services.nlp.preprocessor
+    ```
+
+2.  **Load Datasets:**
+    ```bash
+    python -m scripts.load_datasets
+    ```
+
+3.  **Train TF-IDF Models:**
     ```bash
     python -m services.modeling.tfidf_service
     ```
 
-2.  **Train Word2Vec Models:**
+4.  **Train Word2Vec Models:**
     ```bash
     python -m services.modeling.word2vec_service
     ```
 
-3.  **Build the Inverted Index:**
+5.  **Build the Inverted Index:**
     ```bash
     python -m scripts.build_index
     ```
-    
-4.  **Build Vector Stores:**
+
+6.  **Build Vector Stores:**
     ```bash
     python -m services.retrieval.vector_store_singleton_service
     ```
@@ -178,9 +188,9 @@ This is a mandatory one-time setup process. Before running the application for t
 ### Searching
 
 1.  Open your web browser and navigate to `http://127.0.0.1:5000`.
-2.  Enter your search query in the search box.
-3.  Select the dataset and retrieval model you want to use.
-4.  Click the "Search" button to view the results.
+1.  Enter your search query in the search box.
+1.  Select the dataset and retrieval model you want to use.
+1.  Click the "Search" button to view the results.
 
 ### Evaluation
 
