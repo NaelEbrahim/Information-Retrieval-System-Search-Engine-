@@ -3,9 +3,9 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from tqdm import tqdm
-from services.document_service_singleton import DocumentService
-from preprocessor import Preprocessor
-from inverted_index_singleton_service import InvertedIndexSingletonService
+from services.retrieval.document_service_singleton import DocumentService
+from services.nlp.preprocessor import Preprocessor
+from services.indexing.inverted_index_singleton_service import InvertedIndexSingletonService
 
 
 def main():
