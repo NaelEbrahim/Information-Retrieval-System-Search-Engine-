@@ -44,7 +44,7 @@ class HybridSearchService:
             print(
                 f"Models not loaded for dataset '{dataset_name}', cannot perform search."
             )
-            return []
+            return 0, []
 
         print(f'Search using "{query}"')
         print(f'\tSearching on dataset "{dataset_name}"')
@@ -62,7 +62,7 @@ class HybridSearchService:
 
 
         if not candidate_indices:
-                return 0,[]
+                return 0, []
 
         try:
             # TF-IDF scores
