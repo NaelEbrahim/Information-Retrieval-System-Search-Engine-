@@ -58,7 +58,7 @@ class DocumentService:
         """Retrieves all documents from the dataset."""
         if dataset_name not in self.available_datasets:
             raise ValueError(f"Invalid dataset name: {dataset_name}")
-        return self.datasets[dataset_name].docs_store()
+        return self.datasets[normalize_dataset_name(dataset_name)].docs_store()
 
 
 if __name__ == '__main__':
