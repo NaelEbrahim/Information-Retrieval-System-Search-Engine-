@@ -62,7 +62,7 @@ if __name__ == "__main__":
     for result in results:
         print(f"  Score: {result['score']:.4f}, Doc ID: {result['doc_id']}")
         if result.get("text"):
-            print(f"    Text: {result.text[:150]}...")
+            print(f"    Text: {result['text'][:150]}...")
 
     print("\n" + "=" * 50 + "\n")
 
@@ -74,7 +74,7 @@ if __name__ == "__main__":
     for result in search_results_tfidf:
         print(f"  Score: {result['score']:.4f}, Doc ID: {result['doc_id']}")
         if result.get("text"):
-            print(f"    Text: {result.text[:150]}...")
+            print(f"    Text: {result['text'][:150]}...")
     print("\n" + "=" * 50 + "\n")
 
     print("Searching (Word2Vec) for: ", query)
@@ -85,6 +85,6 @@ if __name__ == "__main__":
     for result in search_results_w2v:
         print(f"  Score: {result['score']:.4f}, Doc ID: {result['doc_id']}")
         if result.get("text"):
-            print(f"    Text: {result.text[:150]}...")
+            print(f"    Text: {result['text'][:150]}...")
 
     print("\n" + "=" * 50 + "\n")
