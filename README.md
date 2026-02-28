@@ -1,16 +1,15 @@
-
 # 🔍 Information Retrieval System
 
-[![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/Flask-Web%20Framework-orange)](https://flask.palletsprojects.com/)
-[![Gensim](https://img.shields.io/badge/Gensim-Word2Vec-purple)](https://radimrehurek.com/gensim/)
-[![Scikit-learn](https://img.shields.io/badge/Scikit--learn-TFIDF-green)](https://scikit-learn.org/)
-[![FAISS](https://img.shields.io/badge/FAISS-Vector%20Search-red)](https://faiss.ai/)
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)  
+[![Flask](https://img.shields.io/badge/Flask-Web%20Framework-orange)](https://flask.palletsprojects.com/)  
+[![Gensim](https://img.shields.io/badge/Gensim-Word2Vec-purple)](https://radimrehurek.com/gensim/)  
+[![Scikit-learn](https://img.shields.io/badge/Scikit--learn-TFIDF-green)](https://scikit-learn.org/)  
+[![FAISS](https://img.shields.io/badge/FAISS-Vector%20Search-red)](https://faiss.ai/)  
 [![NLTK](https://img.shields.io/badge/NLTK-NLP-yellow)](https://www.nltk.org/)
 
-**Keywords:** Python, Flask, TF-IDF, Word2Vec, FAISS, Information Retrieval, Search Engine, NLP, Query Expansion, Evaluation Metrics
+**Keywords:** Python, Flask, TF-IDF, Word2Vec, FAISS, Information Retrieval, Search Engine, NLP, Query Expansion, Evaluation Metrics  
 
-A sophisticated Information Retrieval system with web-based UI, multiple retrieval models, heuristic query expansion, and evaluation tools. Ideal for learning IR concepts and practical implementation.
+A sophisticated Information Retrieval system with a web-based UI, multiple retrieval models, heuristic query expansion, and evaluation tools. Ideal for learning IR concepts and practical implementation.
 
 ---
 
@@ -30,39 +29,45 @@ A sophisticated Information Retrieval system with web-based UI, multiple retriev
 
 ## 📖 Overview
 
-This project is a sophisticated Information Retrieval (IR) system designed to serve as a practical and educational tool for students and instructors in software engineering and computer science. It provides a hands-on implementation of a search engine, complete with a web-based user interface, multiple retrieval models, and evaluation components. The system is built using Python and Flask, with a focus on modularity and extensibility.
+This project is a practical and educational Information Retrieval (IR) system. It implements a search engine with multiple retrieval models, query expansion, and evaluation tools, all accessible via a web-based UI. Built with Python and Flask, it emphasizes modularity and extensibility.
+
+---
 
 ## ✨ Features
 
-*   **Web-Based UI:** A simple and intuitive web interface built with Flask for searching and viewing documents.
-*   **Multiple Retrieval Models:**
-    *   **TF-IDF:** A classical vector space model for information retrieval.
-    *   **Word2Vec:** A neural network-based model for capturing semantic relationships between words.
-    *   **Hybrid Model:** A combination of TF-IDF and Word2Vec scores for improved ranking.
-    *   **FAISS-based Search:** A highly efficient similarity search for dense vectors, integrated with the Word2Vec model.
-*   **Query Suggestion:** Autocompletes user queries based on the dataset's vocabulary.
-*   **Query Expansion:** "Smart" query expansion using Word2Vec to improve search results.
-*   **Evaluation Services:** Built-in support for evaluating retrieval performance using standard IR datasets like TREC and ANTIQUE.
-*   **Modular Architecture:** The project is structured into services for different functionalities, making it easy to understand, maintain, and extend.
+* **Web-Based UI:** Simple and intuitive interface for searching and viewing documents.  
+* **Multiple Retrieval Models:**
+  * **TF-IDF:** Classical vector space model for information retrieval.  
+  * **Word2Vec:** Neural network-based model capturing semantic relationships between words.  
+  * **Hybrid Model:** Combines TF-IDF and Word2Vec scores for improved ranking.  
+  * **FAISS-based Search:** Efficient similarity search using dense vectors from Word2Vec.  
+* **Query Suggestion:** Autocomplete user queries from the dataset vocabulary.  
+* **Query Expansion:** Semantic query expansion using Word2Vec.  
+* **Evaluation Services:** Evaluate retrieval performance using TREC and ANTIQUE datasets.  
+* **Modular Architecture:** Clear separation of services for indexing, retrieval, NLP, and evaluation.
+
+---
 
 ## 🏛️ System Architecture
 
-The system is composed of several key components:
+Key components:
 
-*   **`app.py`:** The main Flask application that handles web requests, renders templates, and orchestrates the search process.
-*   **`search_engine.py`:** The core of the search functionality, which delegates search requests to the appropriate retrieval model.
-*   **Retrieval Models:**
-    *   **`tf_idf_singleton_service.py`:** Implements the TF-IDF model, including vectorization and scoring.
-    *   **`word2vec_singleton_service.py`:** Implements the Word2Vec model, including document vectorization and scoring.
-    *   **`hybrid_search_service.py`:** Combines the results of the TF-IDF and Word2Vec models.
-    *   **`vector_store_singleton_service.py`:** Manages the FAISS index for efficient vector similarity search.
-*   **`inverted_index_singleton_service.py`:** Manages the inverted index, a core data structure for efficient retrieval.
-*   **`document_service_singleton.py`:** Handles loading and accessing document content.
-*   **`preprocessor.py`:** Responsible for text preprocessing tasks such as tokenization, stemming, and stopword removal.
-*   **Evaluation Services:**
-    *   **`TREC_Evaluation_service.py`:** Provides tools for evaluating the system on TREC datasets.
-    *   **`ANTIQUE_Evaluation_service.py`:** Provides tools for evaluating the system on the ANTIQUE dataset.
-    *   **`Metrics_service.py`:** Calculates standard IR metrics such as Precision, Recall, and Mean Average Precision (MAP).
+* **`app.py`** – Main Flask app handling requests, templates, and orchestrating searches.  
+* **`search_engine.py`** – Core search logic delegating to retrieval models.  
+* **Retrieval Models:**
+  * `tfidf_service.py` – TF-IDF model with vectorization and scoring.  
+  * `word2vec_service.py` – Word2Vec model with document vectorization.  
+  * `hybrid_search_service.py` – Combines TF-IDF and Word2Vec results.  
+  * `vector_store_service.py` – FAISS index management for vector search.  
+* **`inverted_index_service.py`** – Manages the inverted index.  
+* **`document_service.py`** – Loads and accesses documents.  
+* **`preprocessor.py`** – Tokenization, stemming, and stopword removal.  
+* **Evaluation Services:**
+  * `trec_evaluation_service.py` – Evaluate on TREC datasets.  
+  * `antique_evaluation_service.py` – Evaluate on ANTIQUE dataset.  
+  * `metrics_service.py` – Computes Precision, Recall, MAP.
+
+---
 
 ## Folder Structure
 
@@ -115,7 +120,7 @@ The system is composed of several key components:
 │   │   ├── query_expander_service.py
 │   │   └── query_suggestion_service.py
 │   ├── indexing
-│   │   └── inverted_index_singleton_service.py
+│   │   └── inverted_index_service.py
 │   ├── modeling
 │   │   ├── tfidf_service.py
 │   │   └── word2vec_service.py
@@ -123,11 +128,11 @@ The system is composed of several key components:
 │   │   ├── preprocessor.py
 │   │   └── spell_corrector.py
 │   ├── retrieval
-│   │   ├── document_service_singleton.py
+│   │   ├── document_service.py
 │   │   ├── hybrid_search_service.py
-│   │   ├── tf_idf_singleton_service.py
-│   │   ├── vector_store_singleton_service.py
-│   │   └── word2vec_singleton_service.py
+│   │   ├── tfidf_service.py
+│   │   ├── vector_store_service.py
+│   │   └── word2vec_service.py
 │   └── search
 │       └── search_engine.py
 ├── static
@@ -142,108 +147,113 @@ The system is composed of several key components:
     └── results.html
 ```
 
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-*   Python 3.8+
-*   Pip for package management
+* Python 3.8+  
+* Pip package manager
 
 ### Installation & Setup
 
-1.  **Clone the repository:**
-    ```bash
-    git clone <repository-url>
-    cd <repository-directory>
-    ```
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd <repository-directory>
+```
 
-2.  **Install the required packages:**
-    ```bash
-    pip install -r requirements.txt
-    ```
+2. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
 
-3.  **Build Models and Indices:**
-    Before running the application, you must build the necessary models. Please follow the instructions in the **"Building Required Models and Indices"** section below.
+3. Build models and indices (see below).
 
-4.  **Run the Application:**
-    Once the setup is complete, you can run the Flask application:
-    ```bash
-    python app.py
-    ```
-    The application will be available at `http://127.0.0.1:5000`.
+4. Run the app:
+```bash
+python app.py
+```
+Visit `http://127.0.0.1:5000` in a browser.
+
+---
 
 ## 🛠️ Building Required Models and Indices
 
-This is a mandatory one-time setup process. Before running the application for the first time, you must build the data models. This involves training the TF-IDF and Word2Vec models and then creating the inverted index.
+**Run these commands in order from the project root:**
 
-**Run the following commands from the project's root directory in the exact order shown:**
+1. Preprocess NLTK data:
+```bash
+python -m services.nlp.preprocessor
+```
 
-1.  **Load NLTK:**
-    ```bash
-    python -m services.nlp.preprocessor
-    ```
+2. Load datasets:
+```bash
+python -m scripts.load_datasets
+```
 
-2.  **Load Datasets:**
-    ```bash
-    python -m scripts.load_datasets
-    ```
+3. Train TF-IDF models:
+```bash
+python -m services.modeling.tfidf_service
+```
 
-3.  **Train TF-IDF Models:**
-    ```bash
-    python -m services.modeling.tfidf_service
-    ```
+4. Train Word2Vec models:
+```bash
+python -m services.modeling.word2vec_service
+```
 
-4.  **Train Word2Vec Models:**
-    ```bash
-    python -m services.modeling.word2vec_service
-    ```
+5. Build inverted index:
+```bash
+python -m scripts.build_index
+```
 
-5.  **Build the Inverted Index:**
-    ```bash
-    python -m scripts.build_index
-    ```
+6. Build FAISS vector stores:
+```bash
+python -m services.retrieval.vector_store_service
+```
 
-6.  **Build Vector Stores:**
-    ```bash
-    python -m services.retrieval.vector_store_singleton_service
-    ```
+> **Note:** Scripts must contain `if __name__ == "__main__":` for module execution.
 
-> **Note:** For a detailed explanation of the model building and loading architecture, please see the `model_building_documentation.txt` file in this repository.
+---
 
 ## Usage
 
 ### Searching
 
-1.  Open your web browser and navigate to `http://127.0.0.1:5000`.
-1.  Enter your search query in the search box.
-1.  Select the dataset and retrieval model you want to use.
-1.  Click the "Search" button to view the results.
+1. Open `http://127.0.0.1:5000`.  
+2. Enter a query.  
+3. Select dataset and retrieval model.  
+4. Click **Search** to view results.
 
 ### Evaluation
 
-The evaluation services can be used to measure the performance of the retrieval models. You can run the evaluation scripts from the command line:
-
+Run evaluation scripts:
 ```bash
 python -m services.evaluation.antique_evaluation_service
 python -m services.evaluation.trec_evaluation_service
 ```
 
+---
+
 ## 🛠️ Technologies Used
 
-*   **Python:** The core programming language.
-*   **Flask:** A lightweight web framework for the user interface.
-*   **Gensim:** For Word2Vec model training and implementation.
-*   **Scikit-learn:** For TF-IDF vectorization and cosine similarity calculations.
-*   **NLTK:** For natural language processing tasks like tokenization and stopword removal.
-*   **FAISS:** A library for efficient similarity search and clustering of dense vectors.
-*   **NumPy:** For numerical operations.
+* Python – core language  
+* Flask – web framework  
+* Gensim – Word2Vec model  
+* Scikit-learn – TF-IDF and similarity calculations  
+* NLTK – NLP preprocessing  
+* FAISS – vector similarity search  
+* NumPy – numerical computations
 
-## 퓨 Future Work
+---
 
-*   **Integration of more advanced retrieval models:** Such as BERT or other transformer-based models.
-*   **User feedback and relevance feedback:** Allow users to provide feedback on search results to improve future rankings.
-*   **Distributed indexing and search:** To support larger datasets and higher query loads.
-*   **More comprehensive evaluation metrics:** And visualization of evaluation results.
+## 🚧 Future Work
+
+* Integrate advanced retrieval models (e.g., BERT).  
+* Add user feedback for relevance refinement.  
+* Support distributed indexing and search for large datasets.  
+* More evaluation metrics and visualization.
 
 ---
 
