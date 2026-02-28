@@ -1,10 +1,10 @@
 # 🔍 Information Retrieval System
 
-[![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)  
-[![Flask](https://img.shields.io/badge/Flask-Web%20Framework-orange)](https://flask.palletsprojects.com/)  
-[![Gensim](https://img.shields.io/badge/Gensim-Word2Vec-purple)](https://radimrehurek.com/gensim/)  
-[![Scikit-learn](https://img.shields.io/badge/Scikit--learn-TFIDF-green)](https://scikit-learn.org/)  
-[![FAISS](https://img.shields.io/badge/FAISS-Vector%20Search-red)](https://faiss.ai/)  
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-Web%20Framework-orange)](https://flask.palletsprojects.com/)
+[![Gensim](https://img.shields.io/badge/Gensim-Word2Vec-purple)](https://radimrehurek.com/gensim/)
+[![Scikit-learn](https://img.shields.io/badge/Scikit--learn-TFIDF-green)](https://scikit-learn.org/)
+[![FAISS](https://img.shields.io/badge/FAISS-Vector%20Search-red)](https://faiss.ai/)
 [![NLTK](https://img.shields.io/badge/NLTK-NLP-yellow)](https://www.nltk.org/)
 
 **Keywords:** Python, Flask, TF-IDF, Word2Vec, FAISS, Information Retrieval, Search Engine, NLP, Query Expansion, Evaluation Metrics  
