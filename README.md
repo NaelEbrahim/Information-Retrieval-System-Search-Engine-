@@ -1,5 +1,32 @@
 
-# Information Retrieval System
+# 🔍 Information Retrieval System
+
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-Web%20Framework-orange)](https://flask.palletsprojects.com/)
+[![Gensim](https://img.shields.io/badge/Gensim-Word2Vec-purple)](https://radimrehurek.com/gensim/)
+[![Scikit-learn](https://img.shields.io/badge/Scikit--learn-TFIDF-green)](https://scikit-learn.org/)
+[![FAISS](https://img.shields.io/badge/FAISS-Vector%20Search-red)](https://faiss.ai/)
+[![NLTK](https://img.shields.io/badge/NLTK-NLP-yellow)](https://www.nltk.org/)
+
+**Keywords:** Python, Flask, TF-IDF, Word2Vec, FAISS, Information Retrieval, Search Engine, NLP, Query Expansion, Evaluation Metrics
+
+A sophisticated Information Retrieval system with web-based UI, multiple retrieval models, heuristic query expansion, and evaluation tools. Ideal for learning IR concepts and practical implementation.
+
+---
+
+## 📑 Table of Contents
+- [Overview](#-overview)
+- [Features](#-features)
+- [System Architecture](#-system-architecture)
+- [Folder Structure](#-folder-structure)
+- [Getting Started](#-getting-started)
+- [Building Models & Indices](#-building-required-models-and-indices)
+- [Usage](#usage)
+- [Technologies](#-technologies-used)
+- [Future Work](#-future-work)
+- [Author](#-author)
+
+---
 
 ## 📖 Overview
 
@@ -217,3 +244,10 @@ python -m services.evaluation.trec_evaluation_service
 *   **User feedback and relevance feedback:** Allow users to provide feedback on search results to improve future rankings.
 *   **Distributed indexing and search:** To support larger datasets and higher query loads.
 *   **More comprehensive evaluation metrics:** And visualization of evaluation results.
+
+---
+
+## 👨‍💻 Author
+
+**Nael Ebrahim**  
+Software Engineer
